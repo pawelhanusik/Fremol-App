@@ -19,7 +19,7 @@ export default {
     if ( !LocalStorage.has('token') ) {
       this.$router.push({path: '/login'})
     } else {  
-      this.$api.post('/api/login/check', {}, {
+      this.$api.post('/login/check', {}, {
         headers: {Authorization: 'Bearer ' + LocalStorage.getItem('token')}
       }).then(response => {
         console.log('API CHECK', response);

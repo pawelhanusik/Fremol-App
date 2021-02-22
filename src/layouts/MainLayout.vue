@@ -91,6 +91,11 @@ const routeLinksData = [
     title: 'Settings',
     icon: 'settings',
     link: '/settings'
+  },
+  {
+    title: 'Logout',
+    icon: 'logout',
+    link: '/logout'
   }
 ];
 const linksData = [

@@ -18,20 +18,30 @@
               label: 'email',
             },
             {
+              name: 'name',
+              type: 'text',
+              label: 'name'
+            },
+            {
               name: 'password',
               type: 'password',
               label: 'password',
+            },
+            {
+              name: 'password2',
+              type: 'password',
+              label: 'repeat password',
             }
           ]"
-          :submit="submitLoginForm"
+          :submit="submitRegisterForm"
         />
       </q-card-section>
       
       <q-item
-        to="/register"
+        to="/login"
         clickable
         tag="a"
-      > Don't have an account yet? Register </q-item>
+      > Already have an account? Login </q-item>
     </q-card>
 
   </q-page>
@@ -39,11 +49,11 @@
 
 <script>
 import NativeForm from 'src/components/NativeForm.vue'
-import { LocalStorage } from 'quasar'
+import { LocalStorage } from 'quasar';
 
 export default {
   components: { NativeForm },
-  name: 'Login',
+  name: 'Register',
 
   beforeCreate() {
     if ( LocalStorage.has('token') ) {
@@ -59,30 +69,40 @@ export default {
   },
 
   methods: {
-    submitLoginForm(evt) {
+    submitRegisterForm(evt) {
       const formData = new FormData(evt.target)
-      const loginData = {}
       
-      if (formData.has('email')) {
-        loginData.email = formData.get('email')
-      }
-      if (formData.has('password')) {
-        loginData.password = formData.get('password')
+      if(
+        !formData.has('email')
+        || !formData.has('name')
+        || !formData.has('password')
+        || !formData.has('password2')
+      ) {
+        this.$q.notify('Please fill in all fields')
+        return
       }
 
-      this.$api.post('/login', loginData).then(response => {
-        console.log('login', response.data)
+      const registerData = {
+        email: formData.get('email'),
+        name: formData.get('name'),
+        password: formData.get('password'),
+        password2: formData.get('password2')
+      }
+
+      if (registerData.password !== registerData.password2) {
+        this.$q.notify('Passwords doesn\'t match!')
+        return
+      }
+
+      this.$api.post('/register', registerData).then(response => {
+        console.log('register', response.data)
         if (response.status === 200) {
-          console.log('Logged in.')
-          this.$q.notify('Logged in')
-          LocalStorage.set('token', response.data.token)
-          this.$router.push({path: '/'})
-        } else {
-          this.$q.notify('Invalid credentials.')
+          console.log('Registered.')
+          this.$q.notify('User registered. Plesase log in.')
+          this.$router.push({path: '/login'})
         }
-      }).catch(error => {
-        this.$q.notify('Invalid credentials.')
       });
+      
     }
   }
 }
