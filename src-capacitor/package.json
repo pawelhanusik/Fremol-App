@@ -1,0 +1,12 @@
+{
+  "name": "fremol-front",
+  "version": "0.0.1",
+  "description": "Messaging app with backend you host yourself",
+  "author": "Pawel Hanusik <39835401+pawelhanusik@users.noreply.github.com>",
+  "private": true,
+  "dependencies": {
+    "@capacitor/android": "2.4.6",
+    "@capacitor/cli": "^2.0.0",
+    "@capacitor/core": "^2.0.0"
+  }
+}

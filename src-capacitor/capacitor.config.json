@@ -1,0 +1,7 @@
+{
+  "appId": "pl.hanusik.pawel.fremol",
+  "appName": "Fremol",
+  "bundledWebRuntime": false,
+  "npmClient": "yarn",
+  "webDir": "www"
+}
