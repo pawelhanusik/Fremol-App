@@ -14,7 +14,7 @@
         filled
       />
       
-      <q-btn label="Submit" type="submit" color="primary"/>
+      <q-btn :label="submitLabel" type="submit" color="primary"/>
       
     </q-form>
   </div>
@@ -24,12 +24,22 @@
 export default {
   data () {
     return {
-      values: [],
+      values: this.initialValues,
       submitResult: []
     }
   },
   props: {
     items: Array,
+    submitLabel: {
+      type: String,
+      default: 'Submit'
+    },
+    initialValues: {
+      type: Array,
+      default: function() {
+        return []
+      }
+    },
     submit: Function
   }
 }

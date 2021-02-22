@@ -25,13 +25,12 @@
           ]"
           :submit="submitLoginForm"
         />
+        <q-item
+          to="/register"
+          clickable
+          tag="a"
+        > Don't have an account yet? Register </q-item>
       </q-card-section>
-      
-      <q-item
-        to="/register"
-        clickable
-        tag="a"
-      > Don't have an account yet? Register </q-item>
     </q-card>
 
   </q-page>

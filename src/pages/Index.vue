@@ -9,7 +9,7 @@
 
 <script>
 import NativeForm from 'src/components/NativeForm.vue'
-import { LocalStorage, SessionStorage } from 'quasar'
+import { LocalStorage } from 'quasar'
 
 export default {
   components: { NativeForm },

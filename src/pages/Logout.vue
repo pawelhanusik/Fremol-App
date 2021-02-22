@@ -32,6 +32,7 @@ export default {
       headers: {Authorization: 'Bearer ' + LocalStorage.getItem('token')}
     }).then(response => {
       LocalStorage.remove('token')
+      LocalStorage.remove('currentUser')
       this.$router.push('/')
       this.message = 'Logged out!'
     }).catch(error => {
