@@ -11,6 +11,7 @@
         v-model="values[index]"
         color="primary"
         :label="item.label"
+        :required="item.required ? true : false"
         filled
       />
       
@@ -29,7 +30,7 @@ export default {
     }
   },
   props: {
-    items: Array,
+    items: Array[{}],
     submitLabel: {
       type: String,
       default: 'Submit'

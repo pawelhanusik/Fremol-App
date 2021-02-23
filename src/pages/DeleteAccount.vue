@@ -32,7 +32,7 @@ export default {
 
   methods: {
     removeAccount() {
-      let userId = this.$q.sessionStorage.getItem('currentUser').id;
+      let userId = this.$q.sessionStorage.getItem('currentUser').id
       this.$api.delete(`/users/${userId}`, {
         headers: {Authorization: 'Bearer ' + this.$q.localStorage.getItem('token')}
       }).then(response => {
