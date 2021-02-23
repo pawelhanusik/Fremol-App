@@ -68,8 +68,10 @@ export default {
   },
   
   beforeCreate() {
-    console.log('email:', this);
-
+    if ( !this.$q.sessionStorage.getItem('loggedIn', false) ) {
+      this.$router.push('/')
+      return
+    }
     if (!this.$q.sessionStorage.has('currentUser')) {
       this.$api.get('/user', {
         headers: {Authorization: 'Bearer ' + this.$q.localStorage.getItem('token')}
