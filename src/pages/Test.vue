@@ -14,8 +14,6 @@
 </template>
 
 <script>
-import { LocalStorage } from 'quasar'
-
 export default {
   name: 'Logout',
   data() {
@@ -26,7 +24,7 @@ export default {
   methods: {
     test() {
       this.$api.delete('/users/4', {
-        headers: {Authorization: 'Bearer ' + LocalStorage.getItem('token')}
+        headers: {Authorization: 'Bearer ' + this.$q.localStorage.getItem('token')}
       }).then(response => {
         console.log(response)
         console.log(response.data)

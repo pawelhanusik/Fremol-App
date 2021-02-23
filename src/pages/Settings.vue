@@ -54,27 +54,26 @@
 
 <script>
 import NativeForm from 'src/components/NativeForm.vue'
-import { LocalStorage } from 'quasar'
 export default {
   components: { NativeForm },
   name: 'Settings',
   
   data() {
     return {
-      user: LocalStorage.getItem('currentUser')
+      user: this.$q.sessionStorage.getItem('currentUser')
     }
   },
   
   beforeCreate() {
     console.log('email:', this);
 
-    if (!LocalStorage.has('currentUser')) {
+    if (!this.$q.sessionStorage.has('currentUser')) {
       this.$api.get('/user', {
-        headers: {Authorization: 'Bearer ' + LocalStorage.getItem('token')}
+        headers: {Authorization: 'Bearer ' + this.$q.localStorage.getItem('token')}
       }).then(response => {
         if(response.status === 200) {
           
-          LocalStorage.set('currentUser', {
+          this.$q.sessionStorage.set('currentUser', {
             id: response.data.id,
             email: response.data.email,
             name: response.data.name
@@ -92,7 +91,7 @@ export default {
 
   methods: {
     submitSettingsForm: function() {
-      LocalStorage.remove('currentUser')
+      this.$q.sessionStorage.remove('currentUser')
     }
   }
 }

@@ -48,16 +48,15 @@
 
 <script>
 import NativeForm from 'src/components/NativeForm.vue'
-import { LocalStorage } from 'quasar';
 
 export default {
   components: { NativeForm },
   name: 'Register',
 
   beforeCreate() {
-    if ( LocalStorage.has('token') ) {
+    if ( this.$q.localStorage.has('token') ) {
       this.$api.post('/login/check', {}, {
-        headers: {Authorization: 'Bearer ' + LocalStorage.getItem('token')}
+        headers: {Authorization: 'Bearer ' + this.$q.localStorage.getItem('token')}
       }).then(response => {
         if(response.status === 200 ) {
           this.$router.push({path: '/'})

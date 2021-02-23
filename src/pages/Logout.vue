@@ -18,8 +18,6 @@
 </template>
 
 <script>
-import { LocalStorage, SessionStorage } from 'quasar'
-
 export default {
   name: 'Logout',
   data() {
@@ -29,10 +27,10 @@ export default {
   },
   created() {
     this.$api.post('/logout', {}, {
-      headers: {Authorization: 'Bearer ' + LocalStorage.getItem('token')}
+      headers: {Authorization: 'Bearer ' + this.$q.localStorage.getItem('token')}
     }).then(response => {
-      LocalStorage.remove('token')
-      LocalStorage.remove('currentUser')
+      this.$q.localStorage.remove('token')
+      this.$q.sessionStorage.clear()
       this.$router.push('/')
       this.message = 'Logged out!'
     }).catch(error => {

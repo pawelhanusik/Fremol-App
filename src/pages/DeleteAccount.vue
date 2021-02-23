@@ -25,7 +25,6 @@
 
 <script>
 import NativeForm from 'src/components/NativeForm.vue'
-import { LocalStorage } from 'quasar'
 
 export default {
   components: { NativeForm },
@@ -33,9 +32,9 @@ export default {
 
   methods: {
     removeAccount() {
-      let userId = LocalStorage.getItem('currentUser').id;
+      let userId = this.$q.sessionStorage.getItem('currentUser').id;
       this.$api.delete(`/users/${userId}`, {
-        headers: {Authorization: 'Bearer ' + LocalStorage.getItem('token')}
+        headers: {Authorization: 'Bearer ' + this.$q.localStorage.getItem('token')}
       }).then(response => {
         if(response.status === 200) {
           this.$q.notify('Account deleted!')

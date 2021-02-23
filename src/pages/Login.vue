@@ -38,16 +38,15 @@
 
 <script>
 import NativeForm from 'src/components/NativeForm.vue'
-import { LocalStorage } from 'quasar'
 
 export default {
   components: { NativeForm },
   name: 'Login',
 
   beforeCreate() {
-    if ( LocalStorage.has('token') ) {
+    if ( this.$q.localStorage.has('token') ) {
       this.$api.post('/login/check', {}, {
-        headers: {Authorization: 'Bearer ' + LocalStorage.getItem('token')}
+        headers: {Authorization: 'Bearer ' + this.$q.localStorage.getItem('token')}
       }).then(response => {
         if(response.status === 200 ) {
           this.$router.push({path: '/'})
@@ -74,7 +73,8 @@ export default {
         if (response.status === 200) {
           console.log('Logged in.')
           this.$q.notify('Logged in')
-          LocalStorage.set('token', response.data.token)
+          this.$q.sessionStorage.set('loggedIn', true)
+          this.$q.localStorage.set('token', response.data.token)
           this.$router.push({path: '/'})
         } else {
           this.$q.notify('Invalid credentials.')
