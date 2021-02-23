@@ -23,7 +23,7 @@ export default {
   },
   methods: {
     test() {
-      this.$api.delete('/users/4', {
+      this.$api.get('/user/conversations', {
         headers: {Authorization: 'Bearer ' + this.$q.localStorage.getItem('token')}
       }).then(response => {
         console.log(response)

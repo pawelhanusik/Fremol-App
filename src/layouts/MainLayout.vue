@@ -47,7 +47,7 @@
           Chats
         </q-item-label>
         <ChatLink
-          v-for="chat in chats"
+          v-for="chat in conversations"
           :key="chat.title"
           :chatId="chat.chatId"
           v-bind="chat"
@@ -106,18 +106,8 @@ const linksData = [
     link: 'http://fremol.pawel.hanusik.pl'
   }
 ];
-const chatsData = [
-  {
-    id: 1,
-    title: 'Conversation 1',
-    icon: 'chat'
-  },
-  {
-    id: 2,
-    title: 'Fav Conv',
-    icon: 'favorite'
-  },
-];
+
+import { mapState } from 'vuex'
 
 export default {
   name: 'MainLayout',
@@ -126,12 +116,20 @@ export default {
     RouteLink,
     ChatLink
   },
+  created() {
+    this.$store.dispatch('conversations/fetchConversations')
+  },
+  computed: {
+    conversations() {
+      console.log(this)
+      return this.$store.getters['conversations/conversationAsLinks']
+    }
+  },
   data () {
     return {
       leftDrawerOpen: false,
       routeLinks: routeLinksData,
-      essentialLinks: linksData,
-      chats: chatsData
+      essentialLinks: linksData
     }
   }
 }
