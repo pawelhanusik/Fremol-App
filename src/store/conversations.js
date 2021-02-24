@@ -28,6 +28,9 @@ export default {
       }).then(response => {
         context.commit('SET_CONVERSATIONS', response.data)
       })
-    }    
+    },
+    clearData (context) {
+      context.commit('SET_CONVERSATIONS', [])
+    }
   }
 }

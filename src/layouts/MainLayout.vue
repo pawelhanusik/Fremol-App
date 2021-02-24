@@ -115,6 +115,7 @@ export default {
     ChatLink
   },
   created() {
+    this.$store.dispatch('user/fetchUserData')
     this.$store.dispatch('conversations/fetchConversations')
   },
   computed: {

@@ -8,6 +8,7 @@
         </q-card-section>
         <q-card-section>
           <native-form
+            id='settings-form'
             v-if="user != null && user.email != null && user.name != null"
             :items="[
               {
@@ -69,14 +70,8 @@ export default {
 
   methods: {
     submitSettingsForm: function(evt) {
-      if (!this.$store.state.user.isLoggedIn) {
-        this.$q.notify('Cannot update settings. Make sure you are logged in')
-        return;
-      }
-      let userId = this.$store.state.user.user.id
+      const settingsForm = document.querySelector('#settings-form')
 
-      this.$q.dispatch('user/clearData')
-      
       const formData = new FormData(evt.target)
       if(
         !formData.has('email')
@@ -102,22 +97,7 @@ export default {
         return
       }
 
-      this.$api.put(`/users/${userId}`, updatedUserData, {
-        headers: {Authorization: 'Bearer ' + this.$q.localStorage.getItem('token')}
-      }).then(response => {
-        
-        if (response.status === 200) {
-          this.$q.notify('Updated settings')
-          this.$store.dispatch('user/fetchUserData')
-        } else {
-          this.$q.notify('Cannot update settings')
-        }
-        this.$router.go()
-        
-      }).catch(error => {
-        this.$q.notify('Cannot update settings')
-        this.$router.go()
-      })
+      this.$store.dispatch('user/updateSettings', updatedUserData)
     }
   }
 }

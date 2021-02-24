@@ -22,7 +22,25 @@
 </template>
 
 <script>
+let unsubscibe = null;
 export default {
+  created() {
+    unsubscibe = this.$store.subscribe((mutation, state) => {
+      if (
+        mutation.type == 'user/SET_ISFETCHING'
+        && !mutation.payload
+      ) {
+        this.values = [
+          this.$store.getters['user/email'],
+          this.$store.getters['user/name']
+        ]
+      }
+    })
+  },
+  destroyed() {
+    unsubscibe()
+  },
+
   data () {
     return {
       values: this.initialValues,
