@@ -71,6 +71,20 @@ export default {
         }
       })
     },
+    sendMessage (context, messageData) {
+      let url = `/conversations/${messageData.conversationID}/messages`;
+      this._vm.$api.post(url, messageData, {
+        headers: {Authorization: 'Bearer ' + this._vm.$q.localStorage.getItem('token')}
+      }).then(response => {
+        if (response.status === 200) {
+          context.dispatch('fetchMessages', messageData.conversationID)
+        } else {
+          this._vm.$q.notify('Cannot send the message')  
+        }
+      }).catch(err => {
+        this._vm.$q.notify('Cannot send the message')
+      })
+    },
     clearData (context) {
       context.commit('SET_CONVERSATIONS', [])
       context.commit('SET_MESSAGES', [])
