@@ -41,6 +41,9 @@ export default {
       ) {
         state.lastMessageCreationTimestamps[msg.conversation_id] = msg.created_at
       }
+    },
+    CLEAR_LAST_MESSAGE_CREATION_TIMESTAMPS (state) {
+      state.lastMessageCreationTimestamps = {}
     }
   },
   actions: {
@@ -71,6 +74,7 @@ export default {
     clearData (context) {
       context.commit('SET_CONVERSATIONS', [])
       context.commit('SET_MESSAGES', [])
+      context.commit('CLEAR_LAST_MESSAGE_CREATION_TIMESTAMPS')
     }
   }
 }
