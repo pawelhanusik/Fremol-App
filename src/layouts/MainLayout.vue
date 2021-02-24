@@ -39,12 +39,12 @@
       </q-list>
 
       <!-- CHATS -->
-      <q-list>
+      <q-list v-if="conversations.length > 0">
         <q-item-label
           header
           class="text-grey-8"
         >
-          Chats
+          Conversations
         </q-item-label>
         <conversation-link
           v-for="conversation in conversations"
@@ -55,7 +55,7 @@
       </q-list>
 
       <!-- EXTERNAL LINKS -->
-      <q-list>
+      <!--<q-list>
         <q-item-label
           header
           class="text-grey-8"
@@ -67,7 +67,7 @@
           :key="link.title"
           v-bind="link"
         />
-      </q-list>
+      </q-list>-->
     </q-drawer>
 
     <q-page-container>
@@ -99,12 +99,6 @@ const routeLinksData = [
   }
 ];
 const linksData = [
-  {
-    title: 'Homepage',
-    caption: 'Homepage of Fremol',
-    icon: 'favorite',
-    link: 'http://fremol.pawel.hanusik.pl'
-  }
 ];
 
 export default {
