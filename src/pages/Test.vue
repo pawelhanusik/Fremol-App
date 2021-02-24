@@ -23,7 +23,7 @@ export default {
   },
   methods: {
     test() {
-      this.$api.get('/user/conversations', {
+      this.$api.get('/conversations/1/messages?last=123', {
         headers: {Authorization: 'Bearer ' + this.$q.localStorage.getItem('token')}
       }).then(response => {
         console.log(response)

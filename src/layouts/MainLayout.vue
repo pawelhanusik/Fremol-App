@@ -31,7 +31,7 @@
         >
           Fremol
         </q-item-label>
-        <RouteLink
+        <route-link
           v-for="link in routeLinks"
           :key="link.title"
           v-bind="link"
@@ -46,11 +46,11 @@
         >
           Chats
         </q-item-label>
-        <ChatLink
-          v-for="chat in conversations"
-          :key="chat.title"
-          :chatId="chat.chatId"
-          v-bind="chat"
+        <conversation-link
+          v-for="conversation in conversations"
+          :key="conversation.title"
+          :conversationID="conversation.id"
+          v-bind="conversation"
         />
       </q-list>
 
@@ -60,10 +60,10 @@
           header
           class="text-grey-8"
         >
-          Essential Links
+          External Links
         </q-item-label>
-        <EssentialLink
-          v-for="link in essentialLinks"
+        <external-link
+          v-for="link in externalLinks"
           :key="link.title"
           v-bind="link"
         />
@@ -77,9 +77,9 @@
 </template>
 
 <script>
-import EssentialLink from 'components/EssentialLink.vue';
 import RouteLink from 'components/RouteLink.vue';
-import ChatLink from 'components/ChatLink.vue';
+import ConversationLink from 'components/ConversationLink.vue';
+import ExternalLink from 'src/components/ExternalLink.vue';
 
 const routeLinksData = [
   {
@@ -110,9 +110,9 @@ const linksData = [
 export default {
   name: 'MainLayout',
   components: {
-    EssentialLink,
     RouteLink,
-    ChatLink
+    ConversationLink,
+    ExternalLink
   },
   created() {
     this.$store.dispatch('user/fetchUserData')
@@ -128,7 +128,7 @@ export default {
     return {
       leftDrawerOpen: false,
       routeLinks: routeLinksData,
-      essentialLinks: linksData
+      externalLinks: linksData
     }
   }
 }

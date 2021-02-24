@@ -1,9 +1,8 @@
 <template>
   <q-item
+    :to="link"
     clickable
     tag="a"
-    target="_blank"
-    :href="link"
   >
     <q-item-section
       v-if="icon"
@@ -14,30 +13,27 @@
 
     <q-item-section>
       <q-item-label>{{ title }}</q-item-label>
-      <q-item-label caption>
-        {{ caption }}
-      </q-item-label>
     </q-item-section>
   </q-item>
 </template>
 
 <script>
 export default {
-  name: 'EssentialLink',
+  name: 'ConversationLink',
+  computed: {
+    link () {
+      return `/conversations/${this.id}`;
+    }
+  },
   props: {
-    title: {
-      type: String,
+    id: {
+      type: Number,
       required: true
     },
 
-    caption: {
+    title: {
       type: String,
-      default: ''
-    },
-
-    link: {
-      type: String,
-      default: '#'
+      required: true
     },
 
     icon: {
