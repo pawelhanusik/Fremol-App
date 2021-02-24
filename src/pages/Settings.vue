@@ -8,8 +8,9 @@
         </q-card-section>
         <q-card-section>
           <native-form
-            id='settings-form'
-            v-if="user != null && user.email != null && user.name != null"
+            formPurpose="settings"
+            submitLabel="Update"
+            :submit="submitSettingsForm"
             :items="[
               {
                 name: 'email',
@@ -40,9 +41,6 @@
                 required: true
               }
             ]"
-            v-bind:initialValues="[this.user.email, this.user.name]"
-            submitLabel="Update"
-            :submit="submitSettingsForm"
           />
         </q-card-section>
         <q-card-section>
@@ -62,16 +60,8 @@ export default {
   components: { NativeForm },
   name: 'Settings',
   
-  data() {
-    return {
-      user: this.$store.state.user.user
-    }
-  },
-
   methods: {
     submitSettingsForm: function(evt) {
-      const settingsForm = document.querySelector('#settings-form')
-
       const formData = new FormData(evt.target)
       if(
         !formData.has('email')

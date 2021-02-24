@@ -25,25 +25,34 @@
 let unsubscibe = null;
 export default {
   created() {
-    unsubscibe = this.$store.subscribe((mutation, state) => {
-      if (
-        mutation.type == 'user/SET_ISFETCHING'
-        && !mutation.payload
-      ) {
-        this.values = [
-          this.$store.getters['user/email'],
-          this.$store.getters['user/name']
-        ]
-      }
-    })
+    if (this.formPurpose == 'settings') {
+      this.values = [
+        this.$store.getters['user/email'],
+        this.$store.getters['user/name']
+      ]
+
+      unsubscibe = this.$store.subscribe((mutation, state) => {
+        if (
+          mutation.type == 'user/SET_ISFETCHING'
+          && !mutation.payload
+        ) {
+          this.values = [
+            this.$store.getters['user/email'],
+            this.$store.getters['user/name']
+          ]
+        }
+      })
+    }
   },
   destroyed() {
-    unsubscibe()
+    if (unsubscibe !== null) {
+      unsubscibe()
+    }
   },
 
   data () {
     return {
-      values: this.initialValues,
+      values: [],
       submitResult: []
     }
   },
@@ -53,11 +62,9 @@ export default {
       type: String,
       default: 'Submit'
     },
-    initialValues: {
-      type: Array,
-      default: function() {
-        return []
-      }
+    formPurpose: {
+      type: String,
+      default: 'unknown'
     },
     submit: Function
   }
