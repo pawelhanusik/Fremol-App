@@ -52,20 +52,7 @@ import NativeForm from 'src/components/NativeForm.vue'
 export default {
   components: { NativeForm },
   name: 'Register',
-
-  beforeCreate() {
-    if ( this.$q.localStorage.has('token') ) {
-      this.$api.post('/login/check', {}, {
-        headers: {Authorization: 'Bearer ' + this.$q.localStorage.getItem('token')}
-      }).then(response => {
-        if(response.status === 200 ) {
-          this.$router.push({path: '/'})
-        }
-      }).catch(error => {
-      });
-    }
-  },
-
+  
   methods: {
     submitRegisterForm(evt) {
       const formData = new FormData(evt.target)
@@ -92,14 +79,7 @@ export default {
         return
       }
 
-      this.$api.post('/register', registerData).then(response => {
-        console.log('register', response.data)
-        if (response.status === 200) {
-          console.log('Registered.')
-          this.$q.notify('User registered. Plesase log in.')
-          this.$router.push({path: '/login'})
-        }
-      });
+      this.$store.dispatch('user/register', registerData)
       
     }
   }

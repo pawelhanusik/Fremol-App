@@ -63,46 +63,19 @@ export default {
   
   data() {
     return {
-      user: this.$q.sessionStorage.getItem('currentUser')
-    }
-  },
-  
-  beforeCreate() {
-    if ( !this.$q.sessionStorage.getItem('loggedIn', false) ) {
-      this.$router.push('/')
-      return
-    }
-    if (!this.$q.sessionStorage.has('currentUser')) {
-      this.$api.get('/user', {
-        headers: {Authorization: 'Bearer ' + this.$q.localStorage.getItem('token')}
-      }).then(response => {
-        if(response.status === 200) {
-          
-          this.$q.sessionStorage.set('currentUser', {
-            id: response.data.id,
-            email: response.data.email,
-            name: response.data.name
-          })
-          this.$router.go()
-          
-        } else {
-          this.$q.notify('Cannot get your settings. Try to relogin or try later.');
-        }
-      }).catch(error => {
-        this.$q.notify('Cannot get your settings. Try to relogin or try later.');
-      });
+      user: this.$store.state.user.user
     }
   },
 
   methods: {
     submitSettingsForm: function(evt) {
-      if (this.$q.sessionStorage.getItem('currentUser') === null) {
+      if (!this.$store.state.user.isLoggedIn) {
         this.$q.notify('Cannot update settings. Make sure you are logged in')
         return;
       }
-      let userId = this.$q.sessionStorage.getItem('currentUser').id
+      let userId = this.$store.state.user.user.id
 
-      this.$q.sessionStorage.remove('currentUser')
+      this.$q.dispatch('user/clearData')
       
       const formData = new FormData(evt.target)
       if(
@@ -135,8 +108,9 @@ export default {
         
         if (response.status === 200) {
           this.$q.notify('Updated settings')
+          this.$store.dispatch('user/fetchUserData')
         } else {
-          this.$q.notify('Cannot update settings');
+          this.$q.notify('Cannot update settings')
         }
         this.$router.go()
         

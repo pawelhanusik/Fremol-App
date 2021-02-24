@@ -4,17 +4,17 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '/', component: () => import('pages/Index.vue') },
+      { path: '/', component: () => import('pages/Index.vue'), meta: {requiresAuth: true} },
       
       { path: '/login', component: () => import('pages/Login.vue') },
       { path: '/register', component: () => import('pages/Register.vue') },
-      { path: '/logout', component: () => import('pages/Logout.vue') },
-      { path: '/settings', component: () => import('pages/Settings.vue') },
-      { path: '/deleteAccount', component: () => import('pages/DeleteAccount.vue') },
+      { path: '/logout', component: () => import('pages/Logout.vue'), meta: {requiresAuth: true} },
+      { path: '/settings', component: () => import('pages/Settings.vue'), meta: {requiresAuth: true} },
+      { path: '/deleteAccount', component: () => import('pages/DeleteAccount.vue'), meta: {requiresAuth: true} },
       
       { path: '/test', component: () => import('pages/Test.vue') },
       
-      { path: '/chat/:chatID', component: () => import('pages/Chat.vue') },
+      { path: '/chat/:chatID', component: () => import('pages/Chat.vue'), meta: {requiresAuth: true} },
     ]
   },
 

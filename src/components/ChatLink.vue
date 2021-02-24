@@ -22,7 +22,6 @@ export default {
   name: 'ChatLink',
   computed: {
     link () {
-      console.log(this.id);
       return `/chat/${this.id}`;
     }
   },

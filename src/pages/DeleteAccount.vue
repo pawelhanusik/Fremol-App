@@ -51,14 +51,14 @@ export default {
         this.$q.notify('Type in "yes" into text box to confirm')
         return
       }
-      let userId = this.$q.sessionStorage.getItem('currentUser').id
+      let userId = this.$store.state.user.user.id
       this.$api.delete(`/users/${userId}`, {
         headers: {Authorization: 'Bearer ' + this.$q.localStorage.getItem('token')}
       }).then(response => {
         if(response.status === 200) {
           this.$q.notify('Account deleted!')
           this.$q.localStorage.remove('token')
-          this.$q.sessionStorage.clear()
+          this.$store.dispatch('user/clearData')
           this.$router.push('/')
         } else {
           this.$q.notify('An error occured: Cannot delete the user. Are you logged in?')

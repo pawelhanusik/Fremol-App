@@ -26,5 +26,19 @@ export default function (/* { store, ssrContext } */) {
     base: process.env.VUE_ROUTER_BASE
   })
 
+  Router.beforeEach((to, from, next) => {
+    const store = Router.app.$store
+    if(to.matched.some(record => record.meta.requiresAuth)) {
+      if (store.getters['user/isLoggedIn']) {
+        next()
+        return
+      }
+      console.log('User is not logged in!')
+      next('/login')
+    } else {
+      next()
+    }
+  })
+
   return Router
 }

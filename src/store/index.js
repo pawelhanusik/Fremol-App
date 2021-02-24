@@ -2,8 +2,8 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 // import example from './module-example'
-import conversations from './conversations'
-import user from './user'
+import conversations from './conversations.js'
+import user from './user.js'
 
 Vue.use(Vuex)
 

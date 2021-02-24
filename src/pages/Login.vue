@@ -44,16 +44,21 @@ export default {
   name: 'Login',
 
   beforeCreate() {
-    if ( this.$q.localStorage.has('token') ) {
-      this.$api.post('/login/check', {}, {
-        headers: {Authorization: 'Bearer ' + this.$q.localStorage.getItem('token')}
-      }).then(response => {
-        if(response.status === 200 ) {
-          this.$router.push({path: '/'})
-        }
-      }).catch(error => {
-      });
+    if (this.$store.getters['user/isLoggedIn']) {
+      this.$router.push({path: '/'})
     }
+  },
+  created() {
+    // change path to '/' when logged in
+    const unsubscribe = this.$store.subscribe((mutation, state) => {
+      if (
+        mutation.type == 'user/SET_ISLOGGEDIN'
+        && state.user.isLoggedIn
+      ) {
+        this.$router.push('/')
+        unsubscribe()
+      }
+    })
   },
 
   methods: {
@@ -68,20 +73,7 @@ export default {
         loginData.password = formData.get('password')
       }
 
-      this.$api.post('/login', loginData).then(response => {
-        console.log('login', response.data)
-        if (response.status === 200) {
-          console.log('Logged in.')
-          this.$q.notify('Logged in')
-          this.$q.sessionStorage.set('loggedIn', true)
-          this.$q.localStorage.set('token', response.data.token)
-          this.$router.push({path: '/'})
-        } else {
-          this.$q.notify('Invalid credentials.')
-        }
-      }).catch(error => {
-        this.$q.notify('Invalid credentials.')
-      });
+      this.$store.dispatch('user/login', loginData)
     }
   }
 }

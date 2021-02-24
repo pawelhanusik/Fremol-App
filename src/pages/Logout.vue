@@ -25,18 +25,13 @@ export default {
       message: 'Logging out...'
     };
   },
-  beforeCreate() {
-    if ( !this.$q.sessionStorage.getItem('loggedIn', false) ) {
-      this.$router.push('/')
-      return
-    }
-  },
+  
   created() {
     this.$api.post('/logout', {}, {
       headers: {Authorization: 'Bearer ' + this.$q.localStorage.getItem('token')}
     }).then(response => {
       this.$q.localStorage.remove('token')
-      this.$q.sessionStorage.clear()
+      this.$store.dispatch('user/clearData')
       this.$router.push('/')
       this.message = 'Logged out!'
     }).catch(error => {

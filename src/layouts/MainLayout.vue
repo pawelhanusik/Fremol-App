@@ -107,8 +107,6 @@ const linksData = [
   }
 ];
 
-import { mapState } from 'vuex'
-
 export default {
   name: 'MainLayout',
   components: {
