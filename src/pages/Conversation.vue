@@ -21,7 +21,7 @@
       </q-page-container>
     </q-layout>
     <div class="row q-mt-md">
-      <q-input v-model="newMessageText" class="q-pb-md q-pl-md q-pr-md col-grow" outlined type="text">
+      <q-input @keydown="onKeyDown" v-model="newMessageText" class="q-pb-md q-pl-md q-pr-md col-grow" outlined type="text">
         <template v-slot:append>
           <q-btn @click="sendMessage" icon="keyboard_arrow_right" color="secondary" />
         </template>
@@ -34,7 +34,6 @@
 import { scroll } from 'quasar'
 const { getScrollTarget } = scroll
 const { getScrollPosition, setScrollPosition } = scroll
-const { getScrollHeight } = scroll
 
 function scrollToElement (el) {
   let target = getScrollTarget(el)
@@ -75,6 +74,25 @@ export default {
     previousConversationID = this.$route.params.conversationID
   },
   created() {
+    console.log('joining')
+    
+    this.$echo.join(`conversations.${this.$route.params.conversationID}`)
+      .here((users) => {
+        console.log("WEBSOCKETS!!! HERE", users)
+      })
+      .joining((user) => {
+        console.log("WEBSOCKETS!!! JOINING", user)
+      })
+      .leaving((user) => {
+        console.log("WEBSOCKETS!!! LEAVING", user)
+      })
+      .listen('MessageSent', (e) => {
+        console.log("WEBSOCKETS !!!", e);
+        if (e.message.conversation_id == this.$route.params.conversationID) {
+          this.$store.dispatch('conversations/fetchMessages', this.$route.params.conversationID)
+        }
+      })
+    
     unsubscibe = this.$store.subscribe((mutation, state) => {
       if (mutation.type == 'conversations/ADD_MESSAGES') {
         console.log("PAYLOAD", mutation.payload)
@@ -92,6 +110,8 @@ export default {
     })
   },
   destroyed() {
+    this.$echo.leave()
+
     if (unsubscibe !== null) {
       unsubscibe()
     }
@@ -111,6 +131,11 @@ export default {
     }
   },
   methods: {
+    onKeyDown(evt) {
+      if (evt.key == "Enter") {
+        this.sendMessage()
+      }
+    },
     sendMessage() {
       if (this.newMessageText.length == 0) {
         return
