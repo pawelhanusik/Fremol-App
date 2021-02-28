@@ -2,7 +2,12 @@
   <div>
     <q-layout container style="height: calc(100vh - 150px);" class="shadow-2 rounded-borders row row-grow">
       <q-page-container>
-        <q-page padding>
+        <q-page id="scrollMessagesContainer" padding>
+          <div class="q-pa-md col items-start q-gutter-md">
+            <q-btn @click="loadPrevMessages">
+              Load more messages
+            </q-btn>
+          </div>
           <div id="messages_div" class="q-pa-md col items-start q-gutter-md">
             <q-card v-for="(msg, msgID) in messages" :id="'message_' + msg.id" :key="msgID" v-bind="msg" class="q-pa-md">
               <q-card-section horizontal>
@@ -14,7 +19,7 @@
             </q-card>
           </div>
 
-          <q-page-scroller reverse position="bottom-right" :scroll-offset="10" :offset="[18, 18]">
+          <q-page-scroller reverse position="bottom-right" :scroll-offset="getPageScrollerScrollOffset" :offset="[18, 18]">
             <q-btn fab icon="keyboard_arrow_down" color="secondary" />
           </q-page-scroller>
         </q-page>
@@ -35,23 +40,23 @@ import { scroll } from 'quasar'
 const { getScrollTarget } = scroll
 const { getScrollPosition, setScrollPosition } = scroll
 
-function scrollToElement (el) {
+function scrollToElement (el, duration = 1000) {
   let target = getScrollTarget(el)
   let offset = el.offsetTop
-  let duration = 1000
   setScrollPosition(target, offset, duration)
   return true
 }
-function scrollToMessage (id) {
+function scrollToMessage (id, duration = 1000) {
   let el = document.getElementById(`message_${id}`)
   if (el === null) {
     return false
   }
-  return scrollToElement(el)
+  return scrollToElement(el, duration)
 }
 
 let previousConversationID = -1
 let scrollToAtNextUpdate = -1
+let scrollToAtNextUpdateDuration = 1000
 let autoScroll = true
 let unsubscibe = null
 
@@ -89,20 +94,34 @@ export default {
       .listen('MessageSent', (e) => {
         console.log("WEBSOCKETS !!!", e);
         if (e.message.conversation_id == this.$route.params.conversationID) {
-          this.$store.dispatch('conversations/fetchMessages', this.$route.params.conversationID)
+          this.$store.commit('conversations/ADD_MESSAGES', [e.message])
+          // make sure that none messages was missed
+          /*this.$store.dispatch('conversations/fetchMessagesRaw', {
+            conversationID: this.$route.params.conversationID,
+            fromID: this.$store.getters['conversations/']
+          })*/
         }
       })
     
     unsubscibe = this.$store.subscribe((mutation, state) => {
       if (mutation.type == 'conversations/ADD_MESSAGES') {
-        console.log("PAYLOAD", mutation.payload)
-
-        // scroll only if already at the bottom
+        
         if (autoScroll) {
-          for (let i = 0; i < mutation.payload.length; ++i) {
-            if (mutation.payload[i].conversation_id == this.$route.params.conversationID) {
-              scrollToAtNextUpdate = mutation.payload[i].id
-              break
+          if (state.conversations.lastMessagesAdditionDirection == -1) {
+            for (let i = mutation.payload.length - 1; i >= 0; --i) {
+              if (mutation.payload[i].conversation_id == this.$route.params.conversationID) {
+                scrollToAtNextUpdateDuration = 0
+                scrollToAtNextUpdate = mutation.payload[i].id
+                break
+              }
+            }
+          } else {
+            for (let i = 0; i < mutation.payload.length; ++i) {
+              if (mutation.payload[i].conversation_id == this.$route.params.conversationID) {
+                scrollToAtNextUpdateDuration = 1000
+                scrollToAtNextUpdate = mutation.payload[i].id
+                break
+              }
             }
           }
         }
@@ -121,13 +140,20 @@ export default {
       scrollToAtNextUpdate > 0
       
     ) {
-      scrollToMessage(scrollToAtNextUpdate)
+      scrollToMessage(scrollToAtNextUpdate, scrollToAtNextUpdateDuration)
       scrollToAtNextUpdate = -1
     }
   },
   computed: {
     messages() {
       return this.$store.getters['conversations/conversationMessages'](this.$route.params.conversationID)
+    },
+    getPageScrollerScrollOffset() {
+      const scrollMessagesContainer = document.getElementById('scrollMessagesContainer')
+      if (scrollMessagesContainer) {
+        return -scrollMessagesContainer.clientHeight + 50
+      }
+      return 0
     }
   },
   methods: {
@@ -146,6 +172,9 @@ export default {
       }
       this.$store.dispatch('conversations/sendMessage', messageData)
       this.newMessageText = ''
+    },
+    loadPrevMessages() {
+      this.$store.dispatch('conversations/fetchPrevMessages', this.$route.params.conversationID)
     }
   }
 }

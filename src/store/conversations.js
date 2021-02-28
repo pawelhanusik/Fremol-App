@@ -3,6 +3,7 @@ export default {
   state: {
     conversations: [],
     messages: [],
+    lastMessagesAdditionDirection: 0,
     lastMessageCreationTimestamps: {}
   },
   getters: {
@@ -22,6 +23,25 @@ export default {
     },
     lastMessageCreationTimestamp: state => (conversationID) => {
       return state.lastMessageCreationTimestamps[conversationID] || null
+    },
+    firstMessageID: state => (conversationID) => {
+      for (let i = 0; i < state.messages.length; ++i) {
+        if (state.messages[i].conversation_id == conversationID) {
+          return state.messages[i].id
+        }
+      }
+      return null
+    },
+    lastMessageID: state => (conversationID) => {
+      for (let i = state.messages.length - 1; i >= 0; --i) {
+        if (state.messages[i].conversation_id == conversationID) {
+          return state.messages[i].id
+        }
+      }
+      return null
+    },
+    countMessages: state => (conversationID) => {
+      return state.messages.reduce((counter, cur) => counter + (cur.conversation_id == conversationID), 0)
     }
   },
   mutations: {
@@ -33,6 +53,21 @@ export default {
     },
     ADD_MESSAGES (state, messages) {
       state.messages = state.messages.concat(messages)
+
+      // sort
+      // TODO: sort using insertion sort (since data is nearly sorted) (DOES THEY?)
+      state.messages = state.messages.sort((a, b) => {
+        if (a.id < b.id) {
+          return -1;
+        }
+        if (a.id > b.id) {
+          return 1;
+        }
+        return 0;
+      })
+    },
+    SET_LAST_MSG_ADDITION_DIRECTION (state, direction) {
+      state.lastMessagesAdditionDirection = direction
     },
     SET_LAST_MESSAGE_CREATION_TIMESTAMP (state, msg) {
       if (
@@ -54,11 +89,62 @@ export default {
         context.commit('SET_CONVERSATIONS', response.data)
       })
     },
+    fetchPrevMessages (context, conversationID) {
+      let firstID = context.getters['firstMessageID'](conversationID)
+      if (firstID === null) {
+        context.dispatch('fetchMessages', conversationID)
+      } else {
+        context.commit('SET_LAST_MSG_ADDITION_DIRECTION', -1)
+        context.dispatch('fetchMessagesRaw', {
+          conversationID: conversationID,
+          toID: firstID - 1,
+          count: 20
+        })
+      }
+    },
     fetchMessages (context, conversationID) {
-      let url = `/conversations/${conversationID}/messages`;
-      let lastMessageCreationTimestamp = context.getters['lastMessageCreationTimestamp'](conversationID)
-      if ( lastMessageCreationTimestamp !== null) {
-        url += `?last=${lastMessageCreationTimestamp}`
+      context.commit('SET_LAST_MSG_ADDITION_DIRECTION', 1)
+      let lastID = context.getters['lastMessageID'](conversationID)
+      if (lastID === null) {
+        context.dispatch('fetchMessagesRaw', {
+          conversationID: conversationID,
+          toDate: (new Date).toISOString(),
+          count: 20
+        })
+      } else {
+        context.dispatch('fetchMessagesRaw', {
+          conversationID: conversationID,
+          fromID: lastID + 1,
+          count: 20
+        })
+      }
+    },
+    fetchMessagesRaw (context, params) {
+      if (typeof(params.conversationID) === 'undefined' || params.conversationID === null) {
+        console.log('fetchMessagesRaw: conversationID is not specified!')
+        return
+      }
+      let url = `/conversations/${params.conversationID}/messages`;
+      let sep = '?'
+      if ( typeof(params.fromID) !== 'undefined' &&  params.fromID !== null) {
+        url += `${sep}fromID=${params.fromID}`
+        sep = '&'
+      }
+      if ( typeof(params.toID) !== 'undefined' &&  params.toID !== null) {
+        url += `${sep}toID=${params.toID}`
+        sep = '&'
+      }
+      if ( typeof(params.fromDate) !== 'undefined' &&  params.fromDate !== null) {
+        url += `${sep}fromDate=${params.fromDate}`
+        sep = '&'
+      }
+      if ( typeof(params.toDate) !== 'undefined' &&  params.toDate !== null) {
+        url += `${sep}toDate=${params.toDate}`
+        sep = '&'
+      }
+      if ( typeof(params.count) !== 'undefined' &&  params.count !== null) {
+        url += `${sep}count=${params.count}`
+        sep = '&'
       }
       this._vm.$api.get(url, {
         headers: {Authorization: 'Bearer ' + this._vm.$q.localStorage.getItem('token')}
