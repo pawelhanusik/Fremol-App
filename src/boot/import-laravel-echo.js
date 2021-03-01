@@ -1,19 +1,21 @@
 import Vue from 'vue'
 import Echo from 'laravel-echo';
+import { LocalStorage } from 'quasar'
 
 const pusher = require('pusher-js');
+
 const echo = new Echo({
   broadcaster: 'pusher',
   key: 'websocketkey',
   cluster: 'main',
-  wsHost: 'localhost',
-  wsPort: 6001,
+  wsHost: '',
+  wsPort: 0,
   disableStats: true,
   forceTLS: false,
-  authEndpoint: 'http://localhost:8000/broadcasting/auth',
+  authEndpoint: '',
   auth: {
     headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('token')
+        Authorization: 'Bearer ' + LocalStorage.getItem('token')
     },
   },
 });

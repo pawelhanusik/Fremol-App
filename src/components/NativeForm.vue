@@ -8,6 +8,8 @@
         :key="index"
         :name="item.name"
         :type="item.type"
+        :min="item.min"
+        :max="item.max"
         v-model="values[index]"
         color="primary"
         :label="item.label"
@@ -42,6 +44,12 @@ export default {
           ]
         }
       })
+    } else if (this.formPurpose == 'appSettings') {
+      this.values = [
+        this.$store.getters['server/host'],
+        this.$store.getters['server/apiPort'],
+        this.$store.getters['server/wsPort']
+      ]
     }
   },
   destroyed() {

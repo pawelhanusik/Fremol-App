@@ -101,6 +101,7 @@ const routeLinksData = [
 const linksData = [
 ];
 
+let unsubscibe = null
 export default {
   name: 'MainLayout',
   components: {
@@ -111,6 +112,22 @@ export default {
   created() {
     this.$store.dispatch('user/fetchUserData')
     this.$store.dispatch('conversations/fetchConversations')
+
+    unsubscibe = this.$store.subscribe((mutation, state) => {
+      if (
+        mutation.type == 'server/SET_HOST'
+        || mutation.type == 'server/SET_APIPORT'
+        || mutation.type == 'server/SET_WSPORT'
+      ) {
+        this.$store.dispatch('server/setAxiosBaseURL')
+        this.$store.dispatch('server/setEchoHostOptions')
+      }
+    })
+  },
+  destroyed() {
+    if (unsubscibe !== null) {
+      unsubscibe()
+    }
   },
   computed: {
     conversations() {

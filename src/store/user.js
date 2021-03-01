@@ -97,7 +97,28 @@ export default {
       })
     },
     
+    logout(context) {
+      this._vm.$api.post('/logout', {}, {
+        headers: {Authorization: 'Bearer ' + this._vm.$q.localStorage.getItem('token')}
+      }).then(response => {
+        context.dispatch('clearData')
+
+        this._vm.$q.notify('Logged out!')
+      }).catch(error => {
+        this._vm.$q.notify('Cannot logout')
+      });
+    },
+    forceLogout(context) {
+      this._vm.$api.post('/logout', {}, {
+        headers: {Authorization: 'Bearer ' + this._vm.$q.localStorage.getItem('token')}
+      }).then(response => {
+      }).catch(error => {
+      });
+      context.dispatch('clearData')
+    },
+
     clearData (context) {
+      this._vm.$q.localStorage.remove('token')
       context.commit('SET_USER', {})
       context.commit('SET_ISLOGGEDIN', false)
       context.dispatch('conversations/clearData', null, { root: true })

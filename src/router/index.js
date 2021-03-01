@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import { LocalStorage } from 'quasar'
 
 import routes from './routes'
 
@@ -29,11 +30,25 @@ export default function (/* { store, ssrContext } */) {
   Router.beforeEach((to, from, next) => {
     const store = Router.app.$store
     if(to.matched.some(record => record.meta.requiresAuth)) {
-      if ( typeof(store) !== 'undefined' && store !== null && store.getters['user/isLoggedIn']) {
-        next()
-        return
+      if ( typeof(store) !== 'undefined' && store !== null && store.getters['server/isConnected']) {
+      /*if (
+        LocalStorage.has('server')
+        && LocalStorage.getItem('server').host
+        && LocalStorage.getItem('server').apiPort
+        && LocalStorage.getItem('server').webSocketsPort
+        && LocalStorage.getItem('server').isConnected
+        && LocalStorage.getItem('server').isConnected == true
+      ) {*/
+        // is connected to the server
+        if ( typeof(store) !== 'undefined' && store !== null && store.getters['user/isLoggedIn']) {
+          next()
+          return
+        }
+        next('/login')
+      } else {
+        // is not connected to the server
+        next('/settings')
       }
-      next('/login')
     } else {
       next()
     }

@@ -27,16 +27,8 @@ export default {
   },
   
   created() {
-    this.$api.post('/logout', {}, {
-      headers: {Authorization: 'Bearer ' + this.$q.localStorage.getItem('token')}
-    }).then(response => {
-      this.$q.localStorage.remove('token')
-      this.$store.dispatch('user/clearData')
-      this.$router.push('/')
-      this.message = 'Logged out!'
-    }).catch(error => {
-      this.message = 'Cannot logout'
-    });
+    this.$store.dispatch('user/logout')
+    this.$router.push('/')
   }
 }
 </script>
