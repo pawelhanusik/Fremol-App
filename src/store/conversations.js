@@ -9,7 +9,7 @@ export default {
   getters: {
     conversationAsLinks (state) {
       let ret = [];
-      for(let conv of state.conversations) {
+      for (let conv of state.conversations) {
         ret.push({
           id: conv.id,
           title: conv.name,
@@ -17,6 +17,14 @@ export default {
         });
       }
       return ret
+    },
+    conversationByID: state => (conversationID) => {
+      for (let conv of state.conversations) {
+        if (conv.id == conversationID) {
+          return conv
+        }
+      }
+      return null
     },
     conversationMessages: state => (conversationID) => {
       return state.messages.filter(msg => msg.conversation_id == conversationID)

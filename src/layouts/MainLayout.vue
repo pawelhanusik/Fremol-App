@@ -12,7 +12,7 @@
         />
 
         <q-toolbar-title>
-          Fremol
+          {{ title }}
         </q-toolbar-title>
       </q-toolbar>
     </q-header>
@@ -163,6 +163,17 @@ export default {
     conversations() {
       console.log(this)
       return this.$store.getters['conversations/conversationAsLinks']
+    },
+    title() {
+      console.log("ROUTE", this.$route)
+      if (
+        this.$route.name === 'conversations'
+        && this.$route.params.conversationID
+      ) {
+        return this.$store.getters['conversations/conversationByID'](this.$route.params.conversationID).name
+      } else {
+        return 'Fremol'
+      }
     }
   },
   data () {
