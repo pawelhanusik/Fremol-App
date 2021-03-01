@@ -30,7 +30,7 @@ export default {
       this._vm.$api.post('/login', loginData).then(response => {
         if (response.status === 200) {
           this._vm.$q.notify('Logged in')
-          localStorage.setItem('token', response.data.token)
+          context.commit('server/SET_TOKEN', response.data.token, { root: true })
           context.dispatch('fetchUserData')
           context.dispatch('conversations/fetchConversations', null, { root: true })
           
@@ -62,9 +62,7 @@ export default {
     },
     fetchUserData (context) {
       context.commit('SET_ISFETCHING', true)
-      this._vm.$api.get('/user', {
-        headers: {Authorization: 'Bearer ' + localStorage.getItem('token') }
-      }).then(response => {
+      this._vm.$api.get('/user').then(response => {
         console.log('logged in response:', response)
         if (response.status === 200) {
           context.commit('SET_USER', response.data)
@@ -81,9 +79,7 @@ export default {
     updateSettings (context, updatedUserData) {
       let userId = context.getters['id']
       context.commit('SET_ISFETCHING', true)
-      this._vm.$api.put(`/users/${userId}`, updatedUserData, {
-        headers: {Authorization: 'Bearer ' + localStorage.getItem('token')}
-      }).then(response => {
+      this._vm.$api.put(`/users/${userId}`, updatedUserData).then(response => {
         if (response.status === 200) {
           this._vm.$q.notify('Updated settings')
           context.dispatch('fetchUserData')
@@ -98,9 +94,7 @@ export default {
     },
     
     logout(context) {
-      this._vm.$api.post('/logout', {}, {
-        headers: {Authorization: 'Bearer ' + this._vm.$q.localStorage.getItem('token')}
-      }).then(response => {
+      this._vm.$api.post('/logout', {}).then(response => {
         context.dispatch('clearData')
 
         this._vm.$q.notify('Logged out!')
@@ -109,16 +103,14 @@ export default {
       });
     },
     forceLogout(context) {
-      this._vm.$api.post('/logout', {}, {
-        headers: {Authorization: 'Bearer ' + this._vm.$q.localStorage.getItem('token')}
-      }).then(response => {
+      this._vm.$api.post('/logout', {}).then(response => {
       }).catch(error => {
       });
       context.dispatch('clearData')
     },
 
     clearData (context) {
-      this._vm.$q.localStorage.remove('token')
+      context.commit('server/SET_TOKEN', '', { root: true })
       context.commit('SET_USER', {})
       context.commit('SET_ISLOGGEDIN', false)
       context.dispatch('conversations/clearData', null, { root: true })

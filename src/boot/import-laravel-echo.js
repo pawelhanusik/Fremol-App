@@ -14,9 +14,7 @@ const echo = new Echo({
   forceTLS: false,
   authEndpoint: '',
   auth: {
-    headers: {
-        Authorization: 'Bearer ' + LocalStorage.getItem('token')
-    },
+    headers: {},
   },
 });
 

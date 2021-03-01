@@ -52,9 +52,7 @@ export default {
         return
       }
       let userId = this.$store.state.user.user.id
-      this.$api.delete(`/users/${userId}`, {
-        headers: {Authorization: 'Bearer ' + this.$q.localStorage.getItem('token')}
-      }).then(response => {
+      this.$api.delete(`/users/${userId}`).then(response => {
         if(response.status === 200) {
           this.$q.notify('Account deleted!')
           this.$q.localStorage.remove('token')

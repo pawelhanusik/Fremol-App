@@ -83,9 +83,7 @@ export default {
   },
   actions: {
     fetchConversations (context) {
-      this._vm.$api.get('/user/conversations', {
-        headers: {Authorization: 'Bearer ' + this._vm.$q.localStorage.getItem('token')}
-      }).then(response => {
+      this._vm.$api.get('/user/conversations').then(response => {
         context.commit('SET_CONVERSATIONS', response.data)
       })
     },
@@ -146,9 +144,7 @@ export default {
         url += `${sep}count=${params.count}`
         sep = '&'
       }
-      this._vm.$api.get(url, {
-        headers: {Authorization: 'Bearer ' + this._vm.$q.localStorage.getItem('token')}
-      }).then(response => {
+      this._vm.$api.get(url).then(response => {
         if (response.data.count > 0) {
           context.commit('ADD_MESSAGES', response.data.messages)
           for (let msg of response.data.messages) {
@@ -159,9 +155,7 @@ export default {
     },
     sendMessage (context, messageData) {
       let url = `/conversations/${messageData.conversationID}/messages`;
-      this._vm.$api.post(url, messageData, {
-        headers: {Authorization: 'Bearer ' + this._vm.$q.localStorage.getItem('token')}
-      }).then(response => {
+      this._vm.$api.post(url, messageData).then(response => {
         if (response.status === 200) {
           context.dispatch('fetchMessages', messageData.conversationID)
         } else {

@@ -113,6 +113,7 @@ export default {
     // set axios & laravel echo connection
     this.$store.dispatch('server/setAxiosBaseURL')
     this.$store.dispatch('server/setEchoHostOptions')
+    this.$store.dispatch('server/setAxiosToken')
     // check connection to server
     this.$store.dispatch('server/checkApiConnection')
     // fetch user data & conversations
@@ -129,6 +130,11 @@ export default {
       ) {
         this.$store.dispatch('server/setAxiosBaseURL')
         this.$store.dispatch('server/setEchoHostOptions')
+      }
+
+      // update axios token
+      else if (mutation.type == 'server/SET_TOKEN') {
+        this.$store.dispatch('server/setAxiosToken')
       }
       
       // redirect on server connected/disconnected

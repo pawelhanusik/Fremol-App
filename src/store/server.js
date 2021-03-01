@@ -6,7 +6,9 @@ export default {
     host: LocalStorage.getItem('server_host') || '',
     apiPort: LocalStorage.getItem('server_apiPort') || '',
     wsPort: LocalStorage.getItem('server_wsPort') || '',
-    isConnected: false
+    isConnected: false,
+
+    token: LocalStorage.getItem('token') || ''
   },
   getters: {
     host: state => state.host,
@@ -21,7 +23,9 @@ export default {
       return `http://${state.host}:${state.apiPort}/broadcasting/auth`
     },
 
-    isConnected: state => state.isConnected
+    isConnected: state => state.isConnected,
+
+    token: state => state.token
   },
   mutations: {
     SET_HOST(state, host) {
@@ -38,6 +42,10 @@ export default {
     },
     SET_ISCONNECTED(state, isConnected) {
       state.isConnected = isConnected
+    },
+    SET_TOKEN(state, token) {
+      state.token = token
+      LocalStorage.set('token', state.token)
     }
   },
   actions: {
@@ -73,6 +81,9 @@ export default {
       this._vm.$echo.options.authEndpoint = context.getters['echoAuthEndpoint']
       this._vm.$echo.disconnect()
       this._vm.$echo.connect()
+    },
+    setAxiosToken(context) {
+      this._vm.$api.defaults.headers.common['Authorization'] = 'Bearer ' + context.getters['token']
     }
   }
 }
