@@ -72,36 +72,33 @@ export default {
     previousConversationID = this.$route.params.conversationID
   },
   beforeUpdate() {
-    // fetch only if conversation was changed
     if (previousConversationID != this.$route.params.conversationID) {
+      // fetch messages only if conversation was changed
       this.$store.dispatch('conversations/fetchMessages', this.$route.params.conversationID)
+      // join conversation's websocket channel
+      this.$echo.leave()
+      this.$echo.join(`conversations.${this.$route.params.conversationID}`)
+        .here((users) => {
+          console.log("WEBSOCKETS!!! HERE", users)
+        })
+        .joining((user) => {
+          console.log("WEBSOCKETS!!! JOINING", user)
+        })
+        .leaving((user) => {
+          console.log("WEBSOCKETS!!! LEAVING", user)
+        })
+        .listen('MessageSent', (e) => {
+          console.log("WEBSOCKETS !!!", e);
+          if (e.message.conversation_id == this.$route.params.conversationID) {
+            this.$store.commit('conversations/ADD_MESSAGES', [e.message])
+            // TODO: make sure that none messages was missed
+          }
+        })
     }
     previousConversationID = this.$route.params.conversationID
   },
   created() {
     console.log('joining')
-    
-    this.$echo.join(`conversations.${this.$route.params.conversationID}`)
-      .here((users) => {
-        console.log("WEBSOCKETS!!! HERE", users)
-      })
-      .joining((user) => {
-        console.log("WEBSOCKETS!!! JOINING", user)
-      })
-      .leaving((user) => {
-        console.log("WEBSOCKETS!!! LEAVING", user)
-      })
-      .listen('MessageSent', (e) => {
-        console.log("WEBSOCKETS !!!", e);
-        if (e.message.conversation_id == this.$route.params.conversationID) {
-          this.$store.commit('conversations/ADD_MESSAGES', [e.message])
-          // make sure that none messages was missed
-          /*this.$store.dispatch('conversations/fetchMessagesRaw', {
-            conversationID: this.$route.params.conversationID,
-            fromID: this.$store.getters['conversations/']
-          })*/
-        }
-      })
     
     unsubscibe = this.$store.subscribe((mutation, state) => {
       if (mutation.type == 'conversations/ADD_MESSAGES') {

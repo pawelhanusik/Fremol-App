@@ -82,8 +82,9 @@ export default {
       this._vm.$echo.disconnect()
       this._vm.$echo.connect()
     },
-    setAxiosToken(context) {
+    setAccessToken(context) {
       this._vm.$api.defaults.headers.common['Authorization'] = 'Bearer ' + context.getters['token']
+      this._vm.$echo.options.auth.headers['Authorization'] = 'Bearer ' + context.getters['token']
     }
   }
 }
