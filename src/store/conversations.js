@@ -87,6 +87,18 @@ export default {
         context.commit('SET_CONVERSATIONS', response.data)
       })
     },
+    async createConversation (context, conversationData) {
+      return new Promise((resolve, reject) => {
+        this._vm.$api.post('/user/conversations', conversationData).then(response => {
+          context.dispatch('fetchConversations')
+            .then(() => {
+              resolve(response.data.conversation.id)
+            })          
+        }).catch(err => {
+          reject()
+        })
+      })
+    },
     fetchPrevMessages (context, conversationID) {
       let firstID = context.getters['firstMessageID'](conversationID)
       if (firstID === null) {

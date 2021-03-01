@@ -46,6 +46,10 @@
         >
           Conversations
         </q-item-label>
+        <route-link
+          :key="newConversationLink.title"
+          v-bind="newConversationLink"
+        />
         <conversation-link
           v-for="conversation in conversations"
           :key="conversation.title"
@@ -165,7 +169,13 @@ export default {
     return {
       leftDrawerOpen: false,
       routeLinks: routeLinksData,
-      externalLinks: linksData
+      externalLinks: linksData,
+      newConversationLink: {
+        id: 0,
+        title: 'new conversation',
+        icon: 'add',
+        link: '/newConversation'
+      }
     }
   }
 }

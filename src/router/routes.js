@@ -14,6 +14,7 @@ const routes = [
       
       { path: '/test', component: () => import('pages/Test.vue') },
       
+      { path: '/newConversation', component: () => import('pages/NewConversation.vue'), meta: {requiresAuth: true} },
       { path: '/conversations/:conversationID', component: () => import('pages/Conversation.vue'), meta: {requiresAuth: true} },
     ]
   },
