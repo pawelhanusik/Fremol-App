@@ -49,11 +49,19 @@ export default {
       context.commit('SET_APIPORT', payload.apiPort)
       context.commit('SET_WSPORT', payload.wsPort)
 
-      context.commit('SET_ISCONNECTED', true)
+      context.dispatch('checkApiConnection')
     },
     disconnect(context) {
       context.dispatch('user/forceLogout', null, { root: true })
       context.commit('SET_ISCONNECTED', false)
+    },
+    
+    checkApiConnection(context) {
+      this._vm.$api.get('/status').then(response => {
+        context.commit('SET_ISCONNECTED', true)
+      }).catch(err => {
+        context.commit('SET_ISCONNECTED', false)
+      })
     },
 
     setAxiosBaseURL(context) {

@@ -100,7 +100,8 @@
 
 <script>
 import NativeForm from 'src/components/NativeForm.vue'
-import server from 'src/store/server'
+
+
 export default {
   components: { NativeForm },
   name: 'Settings',
@@ -137,7 +138,6 @@ export default {
       }
       
       this.$store.dispatch('server/connect', serverData)
-      this.$router.push('/')
     },
     submitSettingsForm: function(evt) {
       const formData = new FormData(evt.target)
