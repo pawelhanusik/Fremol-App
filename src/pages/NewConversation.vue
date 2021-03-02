@@ -58,7 +58,7 @@ export default {
   },
   beforeCreate() {
     this.$api.get('/users').then(response => {
-      this.inputParticipantsOptions = response.data.filter(user => user.id != this.$store.getters['user/id']).map(user => {
+      this.inputParticipantsOptions = response.data.data.filter(user => user.id != this.$store.getters['user/id']).map(user => {
         return {
           label: user.name,
           value: user.id

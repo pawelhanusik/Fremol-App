@@ -9,7 +9,7 @@
         <q-card v-if="isSectionVisible(0)">
           <q-card-actions>
             <q-btn @click="onRollBtnClick(0)" size="sm" color="primary" padding="none" :icon="getRollBtnIcon(0)" class="q-mr-sm" />
-            <div class="text-h6">App settigns</div>
+            <div class="text-h6">App settings</div>
           </q-card-actions>
           <q-card-section v-if="!isSectionRolledUp(0)">
             <native-form

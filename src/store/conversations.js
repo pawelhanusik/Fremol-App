@@ -92,7 +92,7 @@ export default {
   actions: {
     fetchConversations (context) {
       this._vm.$api.get('/user/conversations').then(response => {
-        context.commit('SET_CONVERSATIONS', response.data)
+        context.commit('SET_CONVERSATIONS', response.data.data)
       })
     },
     async createConversation (context, conversationData) {

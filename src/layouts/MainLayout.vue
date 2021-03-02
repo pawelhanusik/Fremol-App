@@ -14,6 +14,16 @@
         <q-toolbar-title>
           {{ title }}
         </q-toolbar-title>
+
+        <q-btn
+          v-if="showRightDrawerOpenButton"
+          flat
+          dense
+          round
+          icon="info"
+          aria-label="Menu"
+          @click="rightDrawerOpen = !rightDrawerOpen"
+        />
       </q-toolbar>
     </q-header>
 
@@ -73,7 +83,18 @@
         />
       </q-list>-->
     </q-drawer>
-
+    
+    <q-drawer
+        side="right"
+        v-model="rightDrawerOpen"
+        show-if-above
+        bordered
+        :width="400"
+        :breakpoint="50"
+        content-class="bg-grey-1"
+      >
+        <right-drawer />
+      </q-drawer>
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -84,6 +105,7 @@
 import RouteLink from 'components/RouteLink.vue';
 import ConversationLink from 'components/ConversationLink.vue';
 import ExternalLink from 'src/components/ExternalLink.vue';
+import RightDrawer from 'src/components/RightDrawer.vue'
 
 const routeLinksData = [
   {
@@ -111,7 +133,8 @@ export default {
   components: {
     RouteLink,
     ConversationLink,
-    ExternalLink
+    ExternalLink,
+    RightDrawer
   },
   beforeMount() {
     // set axios & laravel echo connection
@@ -165,7 +188,6 @@ export default {
       return this.$store.getters['conversations/conversationAsLinks']
     },
     title() {
-      console.log("ROUTE", this.$route)
       if (
         this.$route.name === 'conversations'
         && this.$route.params.conversationID
@@ -174,11 +196,15 @@ export default {
       } else {
         return 'Fremol'
       }
+    },
+    showRightDrawerOpenButton() {
+      return (this.$route.name === 'conversations')
     }
   },
   data () {
     return {
       leftDrawerOpen: false,
+      rightDrawerOpen: false,
       routeLinks: routeLinksData,
       externalLinks: linksData,
       newConversationLink: {
