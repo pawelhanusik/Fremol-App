@@ -107,6 +107,43 @@ export default {
         })
       })
     },
+    async editConversation (context, conversationData) {
+      return new Promise((resolve, reject) => {
+        this._vm.$api.put(`/user/conversations/${conversationData.id}`, conversationData).then(response => {
+          context.dispatch('fetchConversations')
+            .then(() => {
+              resolve(response.data.conversation.id)
+            })          
+        }).catch(err => {
+          reject()
+        })
+      })
+    },
+    async deleteConversation (context, conversationID) {
+      return new Promise((resolve, reject) => {
+        this._vm.$api.delete(`/user/conversations/${conversationID}`).then(response => {
+          context.dispatch('fetchConversations')
+            .then(() => {
+              resolve()
+            })
+        }).catch(err => {
+          reject()
+        })
+      })
+    },
+    async leaveConversation (context, conversationID) {
+      return new Promise((resolve, reject) => {
+        this._vm.$api.delete(`/user/conversations/${conversationID}/leave`).then(response => {
+          context.dispatch('fetchConversations')
+            .then(() => {
+              resolve()
+            })
+        }).catch(err => {
+          reject()
+        })
+      })
+    },
+
     fetchPrevMessages (context, conversationID) {
       let firstID = context.getters['firstMessageID'](conversationID)
       if (firstID === null) {
