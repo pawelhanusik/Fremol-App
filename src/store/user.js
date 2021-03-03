@@ -93,8 +93,8 @@ export default {
       })
     },
     
-    logout(context) {
-      this._vm.$api.post('/logout', {}).then(response => {
+    logout(context, config = {}) {
+      this._vm.$api.post('/logout', {}, config).then(response => {
         context.dispatch('clearData')
 
         this._vm.$q.notify('Logged out!')
@@ -102,8 +102,9 @@ export default {
         this._vm.$q.notify('Cannot logout')
       });
     },
-    forceLogout(context) {
-      this._vm.$api.post('/logout', {}).then(response => {
+    forceLogout(context, config = {}) {
+      console.log('FORCE LOGOUT')
+      this._vm.$api.post('/logout', {}, config).then(response => {
       }).catch(error => {
       });
       context.dispatch('clearData')

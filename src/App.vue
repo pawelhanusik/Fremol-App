@@ -21,6 +21,18 @@ export default {
     this.$store.dispatch('conversations/fetchConversations')
   },
   created() {
+    // automatically logout if auth key expires
+    const store = this.$store
+    this.$api.interceptors.response.use(undefined, function (err) {
+      return new Promise((resolve, reject) => {
+        if (err.response.status === 401 && err.config && !err.config.__isRetryRequest) {
+          err.config.__isRetryRequest = true
+          store.dispatch('user/forceLogout', err.config)
+        }
+        throw err;
+      });
+    });
+
     unsubscibe = this.$store.subscribe((mutation, state) => {
       // update axios & laravel echo connection
       if (
