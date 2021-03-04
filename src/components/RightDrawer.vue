@@ -15,15 +15,22 @@
             <q-btn @click="onLeaveClick" title="Leave" size="sm" icon="logout" />
           </div>
         </div>
-
       </div>
       
       <hr />
+
       <div class="text-h6 q-pl-md q-pt-md"> Participants: </div>
       <div>
         <q-card v-for="user in conversation.users" :key="user.id" class="q-ma-md">
-          <q-card-section>
-            {{ user.name }}
+          <q-card-section class="row">
+            <div class="q-pr-sm col-grow">
+              {{ user.name }}
+            </div>
+            <div
+              v-if="user.id == conversation.creator_id"
+              style="color: grey; text-shadow: 0 0 0.1px #000; transform: scale(90%)"
+            > creator
+            </div>
           </q-card-section>
         </q-card>
       </div>
