@@ -85,12 +85,13 @@
     </q-drawer>
     
     <q-drawer
+        v-if="showRightDrawerOpenButton"
         side="right"
         v-model="rightDrawerOpen"
-        show-if-above
         bordered
         :width="400"
         :breakpoint="50"
+        overlay
         content-class="bg-grey-1"
       >
         <right-drawer />
@@ -127,7 +128,6 @@ const routeLinksData = [
 const linksData = [
 ];
 
-let unsubscibe = null
 export default {
   name: 'MainLayout',
   components: {
