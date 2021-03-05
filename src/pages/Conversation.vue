@@ -17,8 +17,11 @@
                 {{ msg.text }}
               </q-card-section>
               <q-card-section v-if="msg.image_url" horizontal>
-                <q-img 
+                <q-img
+                  @click="onImageClick(msg.image_url)"
                   :src="`${msg.image_url}`"
+                  class="rounded-borders"
+                  style="height: 280px; max-width: 300px"
                 />
               </q-card-section>
             </q-card>
@@ -53,6 +56,11 @@
         label="Select an image"
         accept="image/*"
         style="max-width: 300px"
+      />
+    </q-dialog>
+    <q-dialog v-model="showFullScreenImage">
+      <q-img 
+        :src="fullScreenImageURL"
       />
     </q-dialog>
   </div>
@@ -93,7 +101,10 @@ export default {
   data() {
     return {
       newMessageText: '',
-      showImageSelectionDialog: false
+      showImageSelectionDialog: false,
+      
+      showFullScreenImage: false,
+      fullScreenImageURL: ''
     }
   },
   beforeCreate() {
@@ -205,6 +216,11 @@ export default {
     },
     onOpenImageUploaderClick() {
       this.showImageSelectionDialog = true
+    },
+    onImageClick(url) {
+      this.fullScreenImageURL = url
+      this.showFullScreenImage = true
+      
     }
   }
 }
