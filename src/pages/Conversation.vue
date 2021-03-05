@@ -13,8 +13,13 @@
               <q-card-section horizontal>
                   {{ msg.user }}
               </q-card-section>
-              <q-card-section horizontal>
+              <q-card-section v-if="msg.image_url" horizontal>
                 {{ msg.text }}
+              </q-card-section>
+              <q-card-section v-if="msg.image_url" horizontal>
+                <q-img 
+                  :src="`${msg.image_url}`"
+                />
               </q-card-section>
             </q-card>
           </div>
@@ -26,16 +31,35 @@
       </q-page-container>
     </q-layout>
     <div class="row q-mt-md">
+      <div class="row-grow" >
+        <q-btn
+          @click="onOpenImageUploaderClick"
+          class="q-mt-sm q-ml-sm"
+          icon="image"
+          round
+          flat
+          size="md"
+        />
+      </div>
       <q-input @keydown="onKeyDown" v-model="newMessageText" class="q-pb-md q-pl-md q-pr-md col-grow" outlined type="text">
         <template v-slot:append>
           <q-btn @click="sendMessage" icon="keyboard_arrow_right" color="secondary" />
         </template>
       </q-input>
     </div>
+
+    <q-dialog v-model="showImageSelectionDialog">
+      <image-uploader
+        label="Select an image"
+        accept="image/*"
+        style="max-width: 300px"
+      />
+    </q-dialog>
   </div>
 </template>
 
 <script>
+import ImageUploader from 'src/components/ImageUploader.vue'
 import { scroll } from 'quasar'
 const { getScrollTarget } = scroll
 const { getScrollPosition, setScrollPosition } = scroll
@@ -62,9 +86,14 @@ let unsubscibe = null
 
 export default {
   name: 'PageChat',
+  components: {
+    ImageUploader
+  },
+
   data() {
     return {
-      newMessageText: ''
+      newMessageText: '',
+      showImageSelectionDialog: false
     }
   },
   beforeCreate() {
@@ -163,15 +192,19 @@ export default {
       if (this.newMessageText.length == 0) {
         return
       }
-      const messageData = {
+      this.$store.dispatch('conversations/sendMessage', {
         conversationID: this.$route.params.conversationID,
-        text: this.newMessageText
-      }
-      this.$store.dispatch('conversations/sendMessage', messageData)
+        data: {
+          text: this.newMessageText
+        }
+      })
       this.newMessageText = ''
     },
     loadPrevMessages() {
       this.$store.dispatch('conversations/fetchPrevMessages', this.$route.params.conversationID)
+    },
+    onOpenImageUploaderClick() {
+      this.showImageSelectionDialog = true
     }
   }
 }

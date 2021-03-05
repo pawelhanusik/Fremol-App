@@ -60,6 +60,9 @@ export default {
       state.messages = messages
     },
     ADD_MESSAGES (state, messages) {
+      for (let msg of messages) {
+        msg.image_url = `http://192.168.100.29:8000${msg.image_url}`
+      }
       state.messages = state.messages.concat(messages)
 
       // sort
@@ -210,16 +213,23 @@ export default {
         }
       })
     },
-    sendMessage (context, messageData) {
-      let url = `/conversations/${messageData.conversationID}/messages`;
-      this._vm.$api.post(url, messageData).then(response => {
-        if (response.status === 200) {
-          context.dispatch('fetchMessages', messageData.conversationID)
-        } else {
-          this._vm.$q.notify('Cannot send the message')  
-        }
-      }).catch(err => {
-        this._vm.$q.notify('Cannot send the message')
+    async sendMessage (context, payload) {
+      return new Promise((resolve, reject) => {
+        let url = `/conversations/${payload.conversationID}/messages`;
+        let config = payload.config || {}
+        this._vm.$api.post(url, payload.data, config).then(response => {
+          if (response.status === 200) {
+            context.dispatch('fetchMessages', payload.conversationID)
+          } else {
+            this._vm.$q.notify('Cannot send the message')
+          }
+
+          resolve()
+        }).catch(err => {
+          this._vm.$q.notify('Cannot send the message')
+          
+          reject()
+        })
       })
     },
     clearData (context) {
