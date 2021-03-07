@@ -53,7 +53,7 @@ export default {
         const source = CancelToken.source();
 
         const formData = new FormData();
-        formData.append('image', this.files[0]);        
+        formData.append('media', this.files[0]);
         await this.$store.dispatch('conversations/sendMessage', {
           conversationID: this.$route.params.conversationID,
           config: {

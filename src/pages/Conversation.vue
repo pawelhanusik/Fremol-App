@@ -16,14 +16,60 @@
               <q-card-section v-if="msg.image_url" horizontal>
                 {{ msg.text }}
               </q-card-section>
-              <q-card-section v-if="msg.image_url" horizontal>
-                <q-img
-                  @click="onImageClick(msg.image_url)"
-                  :src="`${msg.image_url}`"
-                  class="rounded-borders"
-                  style="height: 280px; max-width: 300px"
-                />
-              </q-card-section>
+              <!-- ATTACHMENT -->
+              <div>
+                <!-- image -->
+                <q-card-section v-if="isMimeAnImage(msg.attachment_mime)" horizontal>
+                  <q-img
+                    @click="onImageClick(msg.attachment_url)"
+                    :src="`${msg.attachment_url}`"
+                    class="rounded-borders"
+                    style="height: 280px; max-width: 300px"
+                  />
+                </q-card-section>
+                <!-- video -->
+                <q-card-section v-else-if="isMimePlayableVideo(msg.attachment_mime)" horizontal>
+                  <q-img
+                    v-if="msg.attachment_thumbnail"
+                    @click="onVideoClick(msg.attachment_url)"
+                    :src="`${msg.attachment_thumbnail}`"
+                    class="rounded-borders"
+                    style="height: 280px; max-width: 300px"
+                    native-context-menu
+                  >
+                    <div class="absolute-center text-subtitle1 text-center">
+                      Click to play the video
+                    </div>
+                  </q-img>
+                  <q-input v-else
+                    class="text-subtitle1 rounded-borders"
+                    @click="onVideoClick(msg.attachment_url)"
+                    value="Click to play the video"
+                    readonly
+                  />
+                </q-card-section>
+                <!-- audio -->
+                <q-card-section v-else-if="isMimeAnAudio(msg.attachment_mime)" horizontal>
+                  <q-media-player
+                    type="audio"
+                    :sources="[{
+                      src: msg.attachment_url,
+                      type: 'audio/mp3'
+                    }]"
+                  ></q-media-player>
+                </q-card-section>
+                <!-- other -->
+                <q-card-section v-else class="row">
+                  <q-card class="row">
+                    <q-card-section>
+                      There's a file attached.
+                    </q-card-section>
+                    <q-card-section>
+                      <a :href="msg.attachment_url">Download</a>
+                    </q-card-section>
+                  </q-card>
+                </q-card-section>
+              </div>
             </q-card>
           </div>
 
@@ -36,7 +82,7 @@
     <div class="row q-mt-md">
       <div class="row-grow" >
         <q-btn
-          @click="onOpenImageUploaderClick"
+          @click="onOpenMediaUploaderClick"
           class="q-mt-sm q-ml-sm"
           icon="image"
           round
@@ -51,10 +97,10 @@
       </q-input>
     </div>
 
-    <q-dialog v-model="showImageSelectionDialog">
-      <image-uploader
-        label="Select an image"
-        accept="image/*"
+    <q-dialog v-model="showMediaSelectionDialog">
+      <media-uploader
+        label="Select media to upload"
+        accept="image/*, audio/*, video/*"
         style="max-width: 300px"
       />
     </q-dialog>
@@ -63,11 +109,18 @@
         :src="fullScreenImageURL"
       />
     </q-dialog>
+
+    <q-dialog v-model="showFullScreenMedia">
+      <q-media-player
+        type="video"
+        :sources="fullScreenMediaSources"
+      ></q-media-player>
+    </q-dialog>
   </div>
 </template>
 
 <script>
-import ImageUploader from 'src/components/ImageUploader.vue'
+import MediaUploader from 'src/components/MediaUploader.vue'
 import { scroll } from 'quasar'
 const { getScrollTarget } = scroll
 const { getScrollPosition, setScrollPosition } = scroll
@@ -95,16 +148,18 @@ let unsubscibe = null
 export default {
   name: 'PageChat',
   components: {
-    ImageUploader
+    MediaUploader
   },
 
   data() {
     return {
       newMessageText: '',
-      showImageSelectionDialog: false,
+      showMediaSelectionDialog: false,
       
       showFullScreenImage: false,
-      fullScreenImageURL: ''
+      fullScreenImageURL: '',
+      showFullScreenMedia: false,
+      fullScreenMediaSources: []
     }
   },
   beforeCreate() {
@@ -214,13 +269,29 @@ export default {
     loadPrevMessages() {
       this.$store.dispatch('conversations/fetchPrevMessages', this.$route.params.conversationID)
     },
-    onOpenImageUploaderClick() {
-      this.showImageSelectionDialog = true
+    onOpenMediaUploaderClick() {
+      this.showMediaSelectionDialog = true
     },
     onImageClick(url) {
       this.fullScreenImageURL = url
       this.showFullScreenImage = true
-      
+    },
+    onVideoClick(url) {
+      this.fullScreenMediaSources = [{
+          src: url
+      }]
+      this.showFullScreenMedia = true
+    },
+
+    // mime types
+    isMimeAnImage(mime) {
+      return (mime.indexOf('image') == 0)
+    },
+    isMimePlayableVideo(mime) {
+      return (mime.indexOf('video') == 0)
+    },
+    isMimeAnAudio(mime) {
+      return (mime.indexOf('audio') == 0)
     }
   }
 }

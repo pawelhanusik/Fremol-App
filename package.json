@@ -16,6 +16,7 @@
   },
   "devDependencies": {
     "@quasar/app": "^2.0.0",
+    "@quasar/quasar-app-extension-qmediaplayer": "^1.2.1",
     "laravel-echo": "^1.10.0",
     "pusher-js": "^7.0.3"
   },
