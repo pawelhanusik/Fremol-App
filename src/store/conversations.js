@@ -62,8 +62,12 @@ export default {
     ADD_MESSAGES (state, messages) {
       const baseURL = this._vm.$api.defaults.baseURL.substr(0, this._vm.$api.defaults.baseURL.length - 4)
       for (let msg of messages) {
-        msg.attachment_url = baseURL + '/storage/' + msg.attachment_url.substr(7)
-        msg.attachment_thumbnail = baseURL + '/storage/' + msg.attachment_thumbnail.substr(7)
+        if (msg.attachment_url) {
+          msg.attachment_url = baseURL + '/storage/' + msg.attachment_url.substr(7)
+        }
+        if (msg.attachment_thumbnail) {
+          msg.attachment_thumbnail = baseURL + '/storage/' + msg.attachment_thumbnail.substr(7)
+        }
       }
       state.messages = state.messages.concat(messages)
 

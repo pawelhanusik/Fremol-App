@@ -12,8 +12,10 @@
             <q-card v-for="(msg, msgID) in messages" :id="'message_' + msg.id" :key="msgID" v-bind="msg" class="q-pa-md">
               <q-card-section horizontal>
                   {{ msg.user }}
+                  
+                  <q-btn v-if="msg.attachment_mime && msg.attachment_mime != 'other'" @click="onDownloadAttachmentBtnClick(msg.attachment_url)" class="q-ml-md" flat round size="sm" icon="download" />
               </q-card-section>
-              <q-card-section v-if="msg.image_url" horizontal>
+              <q-card-section horizontal>
                 {{ msg.text }}
               </q-card-section>
               <!-- ATTACHMENT -->
@@ -59,13 +61,13 @@
                   ></q-media-player>
                 </q-card-section>
                 <!-- other -->
-                <q-card-section v-else class="row">
+                <q-card-section v-else-if="isMimeOther(msg.attachment_mime)" class="row">
                   <q-card class="row">
                     <q-card-section>
                       There's a file attached.
                     </q-card-section>
                     <q-card-section>
-                      <a :href="msg.attachment_url">Download</a>
+                      <a :href="msg.attachment_url" target="_blank">Download</a>
                     </q-card-section>
                   </q-card>
                 </q-card-section>
@@ -301,16 +303,22 @@ export default {
       }]
       this.showFullScreenMedia = true
     },
+    onDownloadAttachmentBtnClick(attachmentUrl) {
+      window.open(attachmentUrl, '_blank')
+    },
 
     // mime types
     isMimeAnImage(mime) {
-      return (mime.indexOf('image') == 0)
+      return (mime && mime.indexOf('image') == 0)
     },
     isMimePlayableVideo(mime) {
-      return (mime.indexOf('video') == 0)
+      return (mime && mime.indexOf('video') == 0)
     },
     isMimeAnAudio(mime) {
-      return (mime.indexOf('audio') == 0)
+      return (mime && mime.indexOf('audio') == 0)
+    },
+    isMimeOther(mime) {
+      return (mime && mime == 'other')
     }
   }
 }
