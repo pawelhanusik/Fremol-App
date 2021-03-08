@@ -19,7 +19,7 @@
                 {{ msg.text }}
               </q-card-section>
               <!-- ATTACHMENT -->
-              <div>
+              <div v-if="msg.attachment_mime">
                 <!-- image -->
                 <q-card-section v-if="isMimeAnImage(msg.attachment_mime)" horizontal>
                   <q-img
@@ -31,23 +31,14 @@
                 </q-card-section>
                 <!-- video -->
                 <q-card-section v-else-if="isMimePlayableVideo(msg.attachment_mime)" horizontal>
-                  <q-img
-                    v-if="msg.attachment_thumbnail"
-                    @click="onVideoClick(msg.attachment_url)"
-                    :src="`${msg.attachment_thumbnail}`"
-                    class="rounded-borders"
-                    style="height: 280px; max-width: 300px"
-                    native-context-menu
-                  >
-                    <div class="absolute-center text-subtitle1 text-center">
-                      Click to play the video
-                    </div>
-                  </q-img>
-                  <q-input v-else
-                    class="text-subtitle1 rounded-borders"
-                    @click="onVideoClick(msg.attachment_url)"
-                    value="Click to play the video"
-                    readonly
+                  <q-media-player
+                    type="video"
+                    :sources="[{
+                      src: msg.attachment_url,
+                      type: 'video/mp4'
+                    }]"
+                    style="height: 280px; max-width: 500px"
+                    :poster="msg.attachment_thumbnail"
                   />
                 </q-card-section>
                 <!-- audio -->
@@ -61,7 +52,7 @@
                   ></q-media-player>
                 </q-card-section>
                 <!-- other -->
-                <q-card-section v-else-if="isMimeOther(msg.attachment_mime)" class="row">
+                <q-card-section v-else class="row">
                   <q-card class="row">
                     <q-card-section>
                       There's a file attached.
@@ -112,6 +103,7 @@
         label="Select media to upload"
         accept="image/*, audio/*, video/*"
         style="max-width: 300px"
+        max-file-size="20971520"
       />
     </q-dialog>
     <q-dialog v-model="showAttachmentSelectionDialog">
@@ -119,19 +111,13 @@
         label="Select file to upload"
         accept="*"
         style="max-width: 300px"
+        max-file-size="20971520"
       />
     </q-dialog>
     <q-dialog v-model="showFullScreenImage">
       <q-img 
         :src="fullScreenImageURL"
       />
-    </q-dialog>
-
-    <q-dialog v-model="showFullScreenMedia">
-      <q-media-player
-        type="video"
-        :sources="fullScreenMediaSources"
-      ></q-media-player>
     </q-dialog>
   </div>
 </template>
@@ -175,9 +161,7 @@ export default {
       showAttachmentSelectionDialog: false,
       
       showFullScreenImage: false,
-      fullScreenImageURL: '',
-      showFullScreenMedia: false,
-      fullScreenMediaSources: []
+      fullScreenImageURL: ''
     }
   },
   beforeCreate() {
@@ -297,12 +281,6 @@ export default {
       this.fullScreenImageURL = url
       this.showFullScreenImage = true
     },
-    onVideoClick(url) {
-      this.fullScreenMediaSources = [{
-          src: url
-      }]
-      this.showFullScreenMedia = true
-    },
     onDownloadAttachmentBtnClick(attachmentUrl) {
       window.open(attachmentUrl, '_blank')
     },
@@ -316,9 +294,6 @@ export default {
     },
     isMimeAnAudio(mime) {
       return (mime && mime.indexOf('audio') == 0)
-    },
-    isMimeOther(mime) {
-      return (mime && mime == 'other')
     }
   }
 }
