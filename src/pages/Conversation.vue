@@ -89,6 +89,14 @@
           flat
           size="md"
         />
+        <q-btn
+          @click="onOpenAttachmentUploaderClick"
+          class="q-mt-sm q-ml-sm"
+          icon="file_present"
+          round
+          flat
+          size="md"
+        />
       </div>
       <q-input @keydown="onKeyDown" v-model="newMessageText" class="q-pb-md q-pl-md q-pr-md col-grow" outlined type="text">
         <template v-slot:append>
@@ -101,6 +109,13 @@
       <media-uploader
         label="Select media to upload"
         accept="image/*, audio/*, video/*"
+        style="max-width: 300px"
+      />
+    </q-dialog>
+    <q-dialog v-model="showAttachmentSelectionDialog">
+      <media-uploader
+        label="Select file to upload"
+        accept="*"
         style="max-width: 300px"
       />
     </q-dialog>
@@ -155,6 +170,7 @@ export default {
     return {
       newMessageText: '',
       showMediaSelectionDialog: false,
+      showAttachmentSelectionDialog: false,
       
       showFullScreenImage: false,
       fullScreenImageURL: '',
@@ -271,6 +287,9 @@ export default {
     },
     onOpenMediaUploaderClick() {
       this.showMediaSelectionDialog = true
+    },
+    onOpenAttachmentUploaderClick() {
+      this.showAttachmentSelectionDialog = true
     },
     onImageClick(url) {
       this.fullScreenImageURL = url
