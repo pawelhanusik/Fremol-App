@@ -146,10 +146,12 @@ export default {
         this.$route.name === 'conversations'
         && this.$route.params.conversationID
       ) {
-        return this.$store.getters['conversations/conversationByID'](this.$route.params.conversationID).name
-      } else {
-        return 'Fremol'
+        let conversation = this.$store.getters['conversations/conversationByID'](this.$route.params.conversationID)
+        if (conversation) {
+          return conversation.name
+        }
       }
+      return 'Fremol'
     },
     showRightDrawerOpenButton() {
       return (this.$route.name === 'conversations')

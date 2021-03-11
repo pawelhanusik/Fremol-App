@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="contentType == 'conversation'" class="q-pa-md" >
+    <div v-if="contentType == 'conversation' && conversation !== null" class="q-pa-md" >
       <div>
         <div class="">
           <div class="text-h6 text-center"> {{ conversation.name }}</div>
@@ -51,6 +51,9 @@ export default {
       return this.$store.getters['conversations/conversationByID'](this.$route.params.conversationID)
     },
     isCurrentUserTheCreator() {
+      if (this.conversation === null) {
+        return false
+      }
       return this.conversation.creator_id == this.$store.getters['user/id']
     }
   },
