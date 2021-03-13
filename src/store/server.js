@@ -4,6 +4,7 @@ export default {
   namespaced: true,
   state: {
     host: LocalStorage.getItem('server_host') || '',
+    useHttps: LocalStorage.getItem('server_useHttps') || true,
     apiPort: LocalStorage.getItem('server_apiPort') || '',
     wsPort: LocalStorage.getItem('server_wsPort') || '',
     isConnected: false,
@@ -12,15 +13,18 @@ export default {
   },
   getters: {
     host: state => state.host,
+    useHttps: state => state.useHttps || true,
     wsHost: state => state.host,
     apiPort: state => state.apiPort,
     wsPort: state => state.wsPort,
     
     axiosBaseURL: state => {
-      return `http://${state.host}:${state.apiPort}/api`
+      let protocol = state.useHttps ? 'https' : 'http'
+      return `${protocol}://${state.host}:${state.apiPort}/api`
     },
     echoAuthEndpoint: state => {
-      return `http://${state.host}:${state.apiPort}/broadcasting/auth`
+      let protocol = state.useHttps ? 'https' : 'http'
+      return `${protocol}://${state.host}:${state.apiPort}/broadcasting/auth`
     },
 
     isConnected: state => state.isConnected,
@@ -31,6 +35,10 @@ export default {
     SET_HOST(state, host) {
       state.host = host
       LocalStorage.set('server_host', state.host)
+    },
+    SET_USEHTTPS(state, useHttps) {
+      state.useHttps = useHttps
+      LocalStorage.set('server_useHttps', state.useHttps)
     },
     SET_APIPORT(state, apiPort) {
       state.apiPort = apiPort
@@ -54,6 +62,7 @@ export default {
         context.dispatch('disconnect')
       }
       context.commit('SET_HOST', payload.host)
+      context.commit('SET_USEHTTPS', payload.useHttps)
       context.commit('SET_APIPORT', payload.apiPort)
       context.commit('SET_WSPORT', payload.wsPort)
 

@@ -2,20 +2,28 @@
   <div class="q-pa-md">
     <q-form @submit="submit" class="q-gutter-md">
       
-      <q-input
-        v-for="(item, index) in items"
+      <div v-for="(item, index) in items" :key="index">
+        <q-checkbox
+          v-if="item.type == 'checkbox'"
 
-        :key="index"
-        :name="item.name"
-        :type="item.type"
-        :min="item.min"
-        :max="item.max"
-        v-model="values[index]"
-        color="primary"
-        :label="item.label"
-        :required="item.required ? true : false"
-        filled
-      />
+          :name="item.name"
+          v-model="values[index]"
+          :label="item.label"
+        />
+        <q-input
+          v-else
+
+          :name="item.name"
+          :type="item.type"
+          :min="item.min"
+          :max="item.max"
+          v-model="values[index]"
+          color="primary"
+          :label="item.label"
+          :required="item.required ? true : false"
+          filled
+        />
+      </div>
       
       <q-btn :label="submitLabel" type="submit" color="primary"/>
       
@@ -48,7 +56,8 @@ export default {
       this.values = [
         this.$store.getters['server/host'],
         this.$store.getters['server/apiPort'],
-        this.$store.getters['server/wsPort']
+        this.$store.getters['server/wsPort'],
+        this.$store.getters['server/useHttps'],
       ]
     }
   },

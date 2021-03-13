@@ -38,6 +38,11 @@
                   max: 65535,
                   label: 'websockets port',
                   required: true
+                },
+                {
+                  name: 'useHttps',
+                  type: 'checkbox',
+                  label: 'use https'
                 }
               ]"
             />
@@ -133,6 +138,7 @@ export default {
 
       const serverData = {
         host: formData.get('host'),
+        useHttps: formData.get('useHttps') || false,
         apiPort: formData.get('apiPort'),
         wsPort: formData.get('wsPort')
       }
