@@ -1,4 +1,5 @@
 import { LocalStorage } from "quasar"
+import https from 'https'
 
 export default {
   namespaced: true,
@@ -7,6 +8,7 @@ export default {
     useHttps: LocalStorage.getItem('server_useHttps') || true,
     apiPort: LocalStorage.getItem('server_apiPort') || '',
     wsPort: LocalStorage.getItem('server_wsPort') || '',
+    cert: LocalStorage.getItem('server_cert') || '',
     isConnected: false,
 
     token: LocalStorage.getItem('token') || ''
@@ -17,6 +19,7 @@ export default {
     wsHost: state => state.host,
     apiPort: state => state.apiPort,
     wsPort: state => state.wsPort,
+    cert: state => state.cert,
     
     axiosBaseURL: state => {
       let protocol = state.useHttps ? 'https' : 'http'
@@ -48,7 +51,14 @@ export default {
       state.wsPort = wsPort
       LocalStorage.set('server_wsPort', state.wsPort)
     },
+    SET_CERT(state, cert) {
+      state.cert = cert
+      LocalStorage.set('server_cert', state.cert)
+    },
     SET_ISCONNECTED(state, isConnected) {
+      state.isConnected = isConnected
+    },
+    SET_ISCONNECTED_QUIET(state, isConnected) {
       state.isConnected = isConnected
     },
     SET_TOKEN(state, token) {
@@ -65,6 +75,14 @@ export default {
       context.commit('SET_USEHTTPS', payload.useHttps)
       context.commit('SET_APIPORT', payload.apiPort)
       context.commit('SET_WSPORT', payload.wsPort)
+      if (payload.cert) {
+        const reader = new FileReader()
+        reader.onload = function(e) {
+          let certFileContents = e.target.result
+          context.commit('SET_CERT', certFileContents)
+        }
+        reader.readAsText(payload.cert);
+      }
 
       context.dispatch('checkApiConnection')
     },
@@ -83,6 +101,9 @@ export default {
 
     setAxiosBaseURL(context) {
       this._vm.$api.defaults.baseURL = context.getters['axiosBaseURL']
+      this._vm.$api.defaults.agent = new https.Agent({ 
+        ca: context.getters['cert']
+      })
     },
     setEchoHostOptions(context) {
       this._vm.$echo.options.wsHost = context.getters['wsHost']

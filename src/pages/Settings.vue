@@ -43,6 +43,12 @@
                   name: 'useHttps',
                   type: 'checkbox',
                   label: 'use https'
+                },
+                {
+                  name: 'cert',
+                  type: 'file',
+                  label: 'Select certificate file',
+                  depentsOn: 3
                 }
               ]"
             />
@@ -140,7 +146,8 @@ export default {
         host: formData.get('host'),
         useHttps: formData.get('useHttps') || false,
         apiPort: formData.get('apiPort'),
-        wsPort: formData.get('wsPort')
+        wsPort: formData.get('wsPort'),
+        cert: formData.get('cert') || null
       }
       
       this.$store.dispatch('server/connect', serverData)

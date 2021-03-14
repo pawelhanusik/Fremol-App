@@ -10,6 +10,20 @@
           v-model="values[index]"
           :label="item.label"
         />
+        <div v-else-if="item.type == 'file'">
+          <q-file 
+            v-if="!item.depentsOn || values[item.depentsOn]"
+
+            :name="item.name"
+            v-model="values[index]"
+            :label="item.label"
+            hidden
+          >
+            <template v-slot:prepend>
+              <q-icon name="cloud_upload" />
+            </template>
+          </q-file>
+        </div>
         <q-input
           v-else
 
