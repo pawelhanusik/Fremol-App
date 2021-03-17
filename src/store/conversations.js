@@ -72,16 +72,29 @@ export default {
       state.messages = state.messages.concat(messages)
 
       // sort
-      // TODO: sort using insertion sort (since data is nearly sorted) (DOES THEY?)
-      state.messages = state.messages.sort((a, b) => {
-        if (a.id < b.id) {
-          return -1;
+      let merged = []
+      let i = 0
+      let j = 0
+      while (i < state.messages.length && j < messages.length) {
+        if (state.messages[i].id == messages[j].id) {
+          merged.push(messages[j])
+          ++i
+          ++j
+        } else if (state.messages[i].id < messages[j].id) {
+          merged.push(state.messages[i])
+          ++i
+        } else {
+          merged.push(messages[j])
+          ++j
         }
-        if (a.id > b.id) {
-          return 1;
-        }
-        return 0;
-      })
+      }
+      for (; i < state.messages.length; ++i) {
+        merged.push(state.messages[i])
+      }
+      for (; j < messages.length; ++j) {
+        merged.push(messages[j])
+      }
+      state.messages = merged
     },
     SET_LAST_MSG_ADDITION_DIRECTION (state, direction) {
       state.lastMessagesAdditionDirection = direction
