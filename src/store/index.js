@@ -4,6 +4,7 @@ import Vuex from 'vuex'
 import conversations from './conversations.js'
 import user from './user.js'
 import server from './server.js'
+import theme from './theme.js'
 
 Vue.use(Vuex)
 
@@ -21,7 +22,8 @@ export default function (/* { ssrContext } */) {
     modules: {
       conversations,
       user,
-      server
+      server,
+      theme
     },
 
     // enable strict mode (adds overhead!)

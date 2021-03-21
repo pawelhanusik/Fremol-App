@@ -24,6 +24,13 @@
             </template>
           </q-file>
         </div>
+        <q-color
+          v-else-if="item.type == 'color'"
+
+          :name="item.name"
+          v-model="values[index]"
+          :aria-label="item.label"
+        />
         <q-input
           v-else
 
@@ -73,6 +80,8 @@ export default {
         this.$store.getters['server/wsPort'],
         this.$store.getters['server/useHttps'],
       ]
+    } else if (this.formPurpose == 'custom') {
+      this.values = this.initValues
     }
   },
   destroyed() {
@@ -96,6 +105,9 @@ export default {
     formPurpose: {
       type: String,
       default: 'unknown'
+    },
+    initValues: {
+      type: Array
     },
     submit: Function
   }
