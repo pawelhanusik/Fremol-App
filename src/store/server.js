@@ -15,7 +15,7 @@ export default {
   },
   getters: {
     host: state => state.host,
-    useHttps: state => state.useHttps || true,
+    useHttps: state => state.useHttps,
     wsHost: state => state.host,
     apiPort: state => state.apiPort,
     wsPort: state => state.wsPort,
