@@ -5,6 +5,6 @@
   "npmClient": "yarn",
   "webDir": "www",
   "server": {
-    "url": "http://192.168.100.218:8080"
+    "url": "https://<quasar_dev_server_address_here>"
   }
 }

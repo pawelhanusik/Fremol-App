@@ -1,4 +1,4 @@
-import { LocalStorage } from "quasar"
+import { LocalStorage, Platform } from "quasar"
 import https from 'https'
 
 export default {
