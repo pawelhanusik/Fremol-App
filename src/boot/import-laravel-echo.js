@@ -11,7 +11,6 @@ const echo = new Echo({
   wsHost: '',
   wsPort: 0,
   disableStats: true,
-  forceTLS: false,
   authEndpoint: '',
   auth: {
     headers: {},

@@ -108,6 +108,7 @@ export default {
     setEchoHostOptions(context) {
       this._vm.$echo.options.wsHost = context.getters['wsHost']
       this._vm.$echo.options.wsPort = context.getters['wsPort']
+      this._vm.$echo.options.wssPort = context.getters['wsPort']
       this._vm.$echo.options.authEndpoint = context.getters['echoAuthEndpoint']
       this._vm.$echo.disconnect()
       this._vm.$echo.connect()
