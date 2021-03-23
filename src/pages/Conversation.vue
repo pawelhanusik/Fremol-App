@@ -72,48 +72,8 @@
         </q-page>
       </q-page-container>
     </q-layout>
-    <div class="row q-mt-md">
-      <div class="row-grow" >
-        <q-btn
-          @click="onOpenMediaUploaderClick"
-          class="q-mt-sm q-ml-sm"
-          icon="image"
-          round
-          flat
-          size="md"
-        />
-        <q-btn
-          @click="onOpenAttachmentUploaderClick"
-          class="q-mt-sm q-ml-sm"
-          icon="file_present"
-          round
-          flat
-          size="md"
-        />
-      </div>
-      <q-input @keydown="onKeyDown" v-model="newMessageText" class="q-pb-md q-pl-md q-pr-md col-grow" outlined type="text">
-        <template v-slot:append>
-          <q-btn @click="sendMessage" icon="keyboard_arrow_right" color="secondary" />
-        </template>
-      </q-input>
-    </div>
+    <message-input />
 
-    <q-dialog v-model="showMediaSelectionDialog">
-      <media-uploader
-        label="Select media to upload"
-        accept="image/*, audio/*, video/*"
-        style="max-width: 300px"
-        max-file-size="20971520"
-      />
-    </q-dialog>
-    <q-dialog v-model="showAttachmentSelectionDialog">
-      <media-uploader
-        label="Select file to upload"
-        accept="*"
-        style="max-width: 300px"
-        max-file-size="20971520"
-      />
-    </q-dialog>
     <q-dialog v-model="showFullScreenImage">
       <q-img 
         :src="fullScreenImageURL"
@@ -123,10 +83,10 @@
 </template>
 
 <script>
-import MediaUploader from 'src/components/MediaUploader.vue'
 import { scroll } from 'quasar'
 const { getScrollTarget } = scroll
 const { getScrollPosition, setScrollPosition } = scroll
+import MessageInput from 'components/MessageInput'
 
 function scrollToElement (el, duration = 1000) {
   let target = getScrollTarget(el)
@@ -151,15 +111,10 @@ let unsubscibe = null
 export default {
   name: 'PageChat',
   components: {
-    MediaUploader
+    MessageInput
   },
-
   data() {
     return {
-      newMessageText: '',
-      showMediaSelectionDialog: false,
-      showAttachmentSelectionDialog: false,
-      
       showFullScreenImage: false,
       fullScreenImageURL: ''
     }
@@ -217,7 +172,11 @@ export default {
   },
   computed: {
     messages() {
-      return this.$store.getters['conversations/conversationMessages'](this.$route.params.conversationID)
+      console.log("GETTING MESSAGES")
+      console.log("GOT", this.$store.getters['conversations/conversationMessages'](this.$route.params.conversationID))
+      return Object.freeze(
+        this.$store.getters['conversations/conversationMessages'](this.$route.params.conversationID)
+      )
     },
     getPageScrollerScrollOffset() {
       const scrollMessagesContainer = document.getElementById('scrollMessagesContainer')
@@ -251,31 +210,8 @@ export default {
           }
         })
     },
-    onKeyDown(evt) {
-      if (evt.key == "Enter") {
-        this.sendMessage()
-      }
-    },
-    sendMessage() {
-      if (this.newMessageText.length == 0) {
-        return
-      }
-      this.$store.dispatch('conversations/sendMessage', {
-        conversationID: this.$route.params.conversationID,
-        data: {
-          text: this.newMessageText
-        }
-      })
-      this.newMessageText = ''
-    },
     loadPrevMessages() {
       this.$store.dispatch('conversations/fetchPrevMessages', this.$route.params.conversationID)
-    },
-    onOpenMediaUploaderClick() {
-      this.showMediaSelectionDialog = true
-    },
-    onOpenAttachmentUploaderClick() {
-      this.showAttachmentSelectionDialog = true
     },
     onImageClick(url) {
       this.fullScreenImageURL = url
