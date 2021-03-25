@@ -115,6 +115,7 @@ export default {
       context.commit('SET_USER', {})
       context.commit('SET_ISLOGGEDIN', false)
       context.dispatch('conversations/clearData', null, { root: true })
+      context.dispatch('messages/clearData', null, { root: true })
     }
   }
 }

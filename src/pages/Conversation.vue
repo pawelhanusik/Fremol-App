@@ -8,62 +8,8 @@
               Load more messages
             </q-btn>
           </div>
-          <div id="messages_div" class="q-pa-md col items-start q-gutter-md">
-            <q-card v-for="(msg, msgID) in messages" :id="'message_' + msg.id" :key="msgID" v-bind="msg" class="q-pa-md">
-              <q-card-section horizontal>
-                  {{ msg.user }}
-                  
-                  <q-btn v-if="msg.attachment_mime && msg.attachment_mime != 'other'" @click="onDownloadAttachmentBtnClick(msg.attachment_url)" class="q-ml-md" flat round size="sm" icon="download" />
-              </q-card-section>
-              <q-card-section horizontal>
-                {{ msg.text }}
-              </q-card-section>
-              <!-- ATTACHMENT -->
-              <div v-if="msg.attachment_mime">
-                <!-- image -->
-                <q-card-section v-if="isMimeAnImage(msg.attachment_mime)" horizontal>
-                  <q-img
-                    @click="onImageClick(msg.attachment_url)"
-                    :src="`${msg.attachment_url}`"
-                    class="rounded-borders"
-                    style="height: 280px; max-width: 300px"
-                  />
-                </q-card-section>
-                <!-- video -->
-                <q-card-section v-else-if="isMimePlayableVideo(msg.attachment_mime)" horizontal>
-                  <q-media-player
-                    type="video"
-                    :sources="[{
-                      src: msg.attachment_url,
-                      type: 'video/mp4'
-                    }]"
-                    style="height: 280px; max-width: 500px"
-                    :poster="msg.attachment_thumbnail"
-                  />
-                </q-card-section>
-                <!-- audio -->
-                <q-card-section v-else-if="isMimeAnAudio(msg.attachment_mime)" horizontal>
-                  <q-media-player
-                    type="audio"
-                    :sources="[{
-                      src: msg.attachment_url,
-                      type: 'audio/mp3'
-                    }]"
-                  ></q-media-player>
-                </q-card-section>
-                <!-- other -->
-                <q-card-section v-else class="row">
-                  <q-card class="row">
-                    <q-card-section>
-                      There's a file attached.
-                    </q-card-section>
-                    <q-card-section>
-                      <a :href="msg.attachment_url" target="_blank">Download</a>
-                    </q-card-section>
-                  </q-card>
-                </q-card-section>
-              </div>
-            </q-card>
+          <div id="message_containers_div" ref="message_containers_div" class="q-pa-md col items-start q-gutter-md">
+            <!-- CONTEINER FOR MESSAGES -->
           </div>
 
           <q-page-scroller reverse position="bottom-right" :scroll-offset="getPageScrollerScrollOffset" :offset="[18, 18]">
@@ -73,20 +19,19 @@
       </q-page-container>
     </q-layout>
     <message-input />
-
-    <q-dialog v-model="showFullScreenImage">
-      <q-img 
-        :src="fullScreenImageURL"
-      />
-    </q-dialog>
+    
   </div>
 </template>
 
 <script>
+import Vue from 'vue'
 import { scroll } from 'quasar'
 const { getScrollTarget } = scroll
 const { getScrollPosition, setScrollPosition } = scroll
 import MessageInput from 'components/MessageInput'
+import MessageGroup from 'components/MessageGroup'
+
+const MessageGroupClass = Vue.extend(MessageGroup)
 
 function scrollToElement (el, duration = 1000) {
   let target = getScrollTarget(el)
@@ -111,40 +56,62 @@ let unsubscibe = null
 export default {
   name: 'PageChat',
   components: {
-    MessageInput
+    MessageInput,
+    MessageGroup
   },
   data() {
     return {
-      showFullScreenImage: false,
-      fullScreenImageURL: ''
+      pendingJobs: [],
+      oldestMessageID: null
     }
   },
   created() {
     console.log('joining')
-    this.init()
+    /*this.init()
     previousConversationID = this.$route.params.conversationID
+    */
 
     unsubscibe = this.$store.subscribe((mutation, state) => {
-      if (mutation.type == 'conversations/ADD_MESSAGES') {
+      if (mutation.type == 'messages/COMPLETE_JOB') {
+        const jobID = mutation.payload
+        // check if event is for me
+        if (!this.pendingJobs.includes(parseInt(jobID))) {
+          return
+        }
+        // remove job from local pending jobs
+        this.pendingJobs = this.pendingJobs.filter(e => e !== jobID)
         
-        if (autoScroll) {
-          if (state.conversations.lastMessagesAdditionDirection == -1) {
-            for (let i = mutation.payload.length - 1; i >= 0; --i) {
-              if (mutation.payload[i].conversation_id == this.$route.params.conversationID) {
-                scrollToAtNextUpdateDuration = 0
-                scrollToAtNextUpdate = mutation.payload[i].id
-                break
-              }
-            }
-          } else {
-            for (let i = 0; i < mutation.payload.length; ++i) {
-              if (mutation.payload[i].conversation_id == this.$route.params.conversationID) {
-                scrollToAtNextUpdateDuration = 1000
-                scrollToAtNextUpdate = mutation.payload[i].id
-                break
-              }
-            }
+        // ===================================================
+        const messageGroupsContainer = this.$refs['message_containers_div']
+        
+        let messages = []
+        let insertBeforeElement = null
+        if (this.oldestMessageID === null) {
+          messages = this.$store.getters['messages/getLatestMessages'](this.$route.params.conversationID)
+        } else {
+          messages = this.$store.getters['messages/getMessagesBefore'](this.$route.params.conversationID, this.oldestMessageID)
+          insertBeforeElement = messageGroupsContainer.firstChild
+        }
+        this.oldestMessageID = this.$store.getters['messages/firstMessageID'](this.$route.params.conversationID)
+
+        const newMessageGroup = new MessageGroupClass({
+          propsData: {
+            messages: messages
           }
+        })
+        newMessageGroup.$mount()
+        messageGroupsContainer.insertBefore(
+          newMessageGroup.$el,
+          insertBeforeElement
+        )
+        // ===================================================
+        
+        if (insertBeforeElement === null) {
+          if (autoScroll) {
+            scrollToElement(newMessageGroup.$el)
+          }
+        } else {
+          scrollToElement(insertBeforeElement, 0)
         }
       }
     })
@@ -156,12 +123,6 @@ export default {
       unsubscibe()
     }
   },
-  beforeUpdate() {
-    if (previousConversationID != this.$route.params.conversationID) {
-      this.init()
-    }
-    previousConversationID = this.$route.params.conversationID
-  },
   updated() {
     if (
       scrollToAtNextUpdate > 0
@@ -169,15 +130,20 @@ export default {
       scrollToMessage(scrollToAtNextUpdate, scrollToAtNextUpdateDuration)
       scrollToAtNextUpdate = -1
     }
+  
+  },
+  watch: {
+    '$route.params': {
+        handler() {
+            if (previousConversationID != this.$route.params.conversationID) {
+              this.init()
+            }
+            previousConversationID = this.$route.params.conversationID
+        },
+        immediate: true,
+    }
   },
   computed: {
-    messages() {
-      console.log("GETTING MESSAGES")
-      console.log("GOT", this.$store.getters['conversations/conversationMessages'](this.$route.params.conversationID))
-      return Object.freeze(
-        this.$store.getters['conversations/conversationMessages'](this.$route.params.conversationID)
-      )
-    },
     getPageScrollerScrollOffset() {
       const scrollMessagesContainer = document.getElementById('scrollMessagesContainer')
       if (scrollMessagesContainer) {
@@ -188,8 +154,25 @@ export default {
   },
   methods: {
     init() {
+      console.log("INIT")
+      
+      // clear
+      this.oldestMessageID = null
+      this.pendingJobs = []
+      const messageGroupsContainer = this.$refs['message_containers_div'] || null
+      if (messageGroupsContainer !== null) {
+        while (messageGroupsContainer.firstChild) {
+          messageGroupsContainer.removeChild(messageGroupsContainer.lastChild);
+        }
+      }
+
       // fetch messages only if conversation was changed
-      this.$store.dispatch('conversations/fetchMessages', this.$route.params.conversationID)
+      this.$store.dispatch('messages/getLatestMessages', {
+        conversationID: this.$route.params.conversationID
+      }).then((jobID) => {
+        this.pendingJobs.push(jobID)
+      })
+      
       // join conversation's websocket channel
       this.$echo.leave()
       this.$echo.join(`conversations.${this.$route.params.conversationID}`)
@@ -205,31 +188,32 @@ export default {
         .listen('MessageSent', (e) => {
           console.log("WEBSOCKETS !!!", e);
           if (e.message.conversation_id == this.$route.params.conversationID) {
-            this.$store.commit('conversations/ADD_MESSAGES', [e.message])
+            // this.$store.commit('conversations/ADD_MESSAGES', [e.message])
             // TODO: make sure that none messages was missed
+            const messageGroupsContainer = this.$refs['message_containers_div']
+            const newMessageGroup = new MessageGroupClass({
+              propsData: {
+                messages: [e.message]
+              }
+            })
+            newMessageGroup.$mount()
+            messageGroupsContainer.insertBefore(
+              newMessageGroup.$el,
+              null
+            )
+            if (autoScroll) {
+              scrollToElement(newMessageGroup.$el)
+            }
           }
         })
     },
     loadPrevMessages() {
-      this.$store.dispatch('conversations/fetchPrevMessages', this.$route.params.conversationID)
-    },
-    onImageClick(url) {
-      this.fullScreenImageURL = url
-      this.showFullScreenImage = true
-    },
-    onDownloadAttachmentBtnClick(attachmentUrl) {
-      window.open(attachmentUrl, '_blank')
-    },
-
-    // mime types
-    isMimeAnImage(mime) {
-      return (mime && mime.indexOf('image') == 0)
-    },
-    isMimePlayableVideo(mime) {
-      return (mime && mime.indexOf('video') == 0)
-    },
-    isMimeAnAudio(mime) {
-      return (mime && mime.indexOf('audio') == 0)
+      this.$store.dispatch('messages/getMessagesBefore', {
+        conversationID: this.$route.params.conversationID,
+        firstID: this.oldestMessageID
+      }).then((jobID) => {
+        this.pendingJobs.push(jobID)
+      })
     }
   }
 }

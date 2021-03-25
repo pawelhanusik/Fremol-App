@@ -136,11 +136,6 @@
               ]"
             />
           </q-card-section>
-          <q-card-section v-if="!isSectionRolledUp(1)">
-            <q-btn color="red" to="/deleteAccount">
-              Delete account
-            </q-btn>
-          </q-card-section>
         </q-card>
 
       </q-card>
