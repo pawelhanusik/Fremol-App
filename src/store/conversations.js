@@ -89,7 +89,7 @@ export default {
         let config = payload.config || {}
         this._vm.$api.post(url, payload.data, config).then(response => {
           if (response.status === 200) {
-            context.dispatch('fetchMessages', payload.conversationID)
+            //
           } else {
             this._vm.$q.notify('Cannot send the message')
           }
