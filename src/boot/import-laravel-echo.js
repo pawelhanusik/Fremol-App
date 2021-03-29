@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Echo from 'laravel-echo';
-import { LocalStorage } from 'quasar'
 
 const pusher = require('pusher-js');
 

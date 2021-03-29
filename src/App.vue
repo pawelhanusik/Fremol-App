@@ -40,7 +40,6 @@ export default {
         || mutation.type == 'server/SET_USEHTTPS'
         || mutation.type == 'server/SET_APIPORT'
         || mutation.type == 'server/SET_WSPORT'
-        || mutation.type == 'server/SET_CERT'
       ) {
         this.$store.dispatch('server/setAxiosBaseURL')
         this.$store.dispatch('server/setEchoHostOptions')
