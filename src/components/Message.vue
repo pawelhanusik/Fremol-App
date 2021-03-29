@@ -3,6 +3,7 @@
     <q-chat-message
       :sent="sent"
       :name="user"
+      :avatar="user_avatar_url ? user_avatar_url : undefined"
       :stamp="stamp"
       :text="text !== null ? [text] : []"
       
@@ -59,11 +60,20 @@
           </div>
         </div>
       </slot>
+      <template v-if="false && user_avatar_url" slot="avatar">
+        <q-avatar class="q-ma-md">
+          <q-img
+            :src="user_avatar_url"
+            ratio="1"
+          />
+        </q-avatar>
+      </template>
     </q-chat-message>
     
     <q-dialog v-model="showFullScreenImage">
       <q-img 
         :src="fullScreenImageURL"
+        contain
       />
     </q-dialog>
   </div>
@@ -88,6 +98,10 @@ export default {
     user: {
       type: String,
       required: true
+    },
+    user_avatar_url: {
+      type: String,
+      default: null
     },
     sent: {
       type: Boolean,

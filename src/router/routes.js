@@ -9,6 +9,7 @@ const routes = [
       { path: '/login', component: () => import('pages/Login.vue') },
       { path: '/register', component: () => import('pages/Register.vue') },
       { path: '/logout', component: () => import('pages/Logout.vue'), meta: {requiresAuth: true} },
+      { path: '/profile', component: () => import('pages/Profile.vue'), meta: {requiresAuth: true} },
       { path: '/settings', component: () => import('pages/Settings.vue') },
       { path: '/deleteAccount', component: () => import('pages/DeleteAccount.vue'), meta: {requiresAuth: true} },
       

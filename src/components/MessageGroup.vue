@@ -9,6 +9,7 @@
 
       :user_id="parseInt(msg.user_id)"
       :user="msg.user"
+      :user_avatar_url="msg.user_avatar_url"
       :sent="current_user_id == msg.user_id"
 
       :text="msg.text"

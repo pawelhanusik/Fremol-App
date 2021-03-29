@@ -11,6 +11,7 @@ export default {
     user: state => state.user,
     id: state => state.user.id || -1,
     email: state => state.user.email || '',
+    avatar_url: state => state.user.avatar_url || '',
     name: state => state.user.name || '',
   },
   mutations: {
@@ -21,6 +22,10 @@ export default {
       state.isLoggedIn = isLoggedIn
     },
     SET_USER (state, user) {
+      if (user.avatar_url) {
+        const baseURL = this._vm.$api.defaults.baseURL.substr(0, this._vm.$api.defaults.baseURL.length - 4)
+        user.avatar_url = baseURL + '/storage/' + user.avatar_url.substr(7)
+      }
       state.user = user
     }
   },
@@ -79,7 +84,7 @@ export default {
     updateSettings (context, updatedUserData) {
       let userId = context.getters['id']
       context.commit('SET_ISFETCHING', true)
-      this._vm.$api.put(`/users/${userId}`, updatedUserData).then(response => {
+      this._vm.$api.post(`/users/${userId}/update`, updatedUserData).then(response => {
         if (response.status === 200) {
           this._vm.$q.notify('Updated settings')
           context.dispatch('fetchUserData')

@@ -115,6 +115,11 @@ const routeLinksData = [
     link: '/'
   },
   {
+    title: 'Profile',
+    icon: 'person',
+    link: '/profile'
+  },
+  {
     title: 'Settings',
     icon: 'settings',
     link: '/settings'

@@ -56,24 +56,7 @@
 let unsubscibe = null;
 export default {
   created() {
-    if (this.formPurpose == 'settings') {
-      this.values = [
-        this.$store.getters['user/email'],
-        this.$store.getters['user/name']
-      ]
-
-      unsubscibe = this.$store.subscribe((mutation, state) => {
-        if (
-          mutation.type == 'user/SET_ISFETCHING'
-          && !mutation.payload
-        ) {
-          this.values = [
-            this.$store.getters['user/email'],
-            this.$store.getters['user/name']
-          ]
-        }
-      })
-    } else if (this.formPurpose == 'appSettings') {
+    if (this.formPurpose == 'appSettings') {
       this.values = [
         this.$store.getters['server/host'],
         this.$store.getters['server/apiPort'],

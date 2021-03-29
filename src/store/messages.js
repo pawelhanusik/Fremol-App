@@ -84,6 +84,10 @@ export default {
       // fix attachemnts' URLs
       const baseURL = this._vm.$api.defaults.baseURL.substr(0, this._vm.$api.defaults.baseURL.length - 4)
       for (let msg of messages) {
+        if (msg.user_avatar_url) {
+          msg.user_avatar_url = baseURL + '/storage/' + msg.user_avatar_url.substr(7)
+        }
+
         if (msg.attachment_url) {
           msg.attachment_url = baseURL + '/storage/' + msg.attachment_url.substr(7)
         }
@@ -221,7 +225,6 @@ export default {
           count: count
         })
       } else {
-        context.commit('SET_LAST_MSG_ADDITION_DIRECTION', -1)
         context.dispatch('fetchMessagesRaw', {
           jobID: jobID,
           conversationID: conversationID,
