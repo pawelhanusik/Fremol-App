@@ -1,84 +1,86 @@
 <template>
-  <q-form
-    @submit="onSubmit"
-    @reset="onReset"
-    class="col q-ml-md q-ma-lg"
-  >
-    <div class="row">
-      <q-file
-        @input="onNewAvatarSelected"
-        @rejected="onNewAvatarRejected"
-        ref="avatar_picker"
-        class="hidden"
-        accept="image/png,image/jpeg"
-        max-file-size=2097152
-      />
-      <q-avatar
-        @mouseenter="setMouseOverAvatar(true)"
-        @mouseleave="setMouseOverAvatar(false)"
-        size="100px"
-        class="q-ma-md"
-      >
-        <q-img
-          :src="avatar_url"
-          @error="onAvatarError"
-          ratio="1"
-        >
-          <transition
-            enter-active-class="animated fadeIn"
-            leave-active-class="animated fadeOut"
-          >
-            <div
-              v-if="isMouseOverAvatar"
-              
-              @click="onChangeAvatarClick"
-              class="absolute-full text-subtitle1 flex flex-center"
-              style="cursor: pointer"
-            >
-              Change
-            </div>
-          </transition>
-          <transition
-            enter-active-class="animated fadeIn"
-            leave-active-class="animated fadeOut"
-          >
-            <div
-              v-if="!avatar_url && !isMouseOverAvatar"
-              
-              @click="onChangeAvatarClick"
-              class="absolute-full text-subtitle1 flex flex-center"
-              style="cursor: pointer"
-            >
-              Avatar
-            </div>
-          </transition>
-          
-        </q-img>
-      </q-avatar>
-      <q-input class="col-grow q-ma-md" label="name" name="name" v-model="name"/>
-    </div>
-    <q-input class="col-grow q-ma-md" type="email" label="email" name="email" v-model="email"/>
-    
-    <transition
-      enter-active-class="animated fadeInDown"
-      leave-active-class="animated fadeOutRight"
+  <q-page>
+    <q-form
+      @submit="onSubmit"
+      @reset="onReset"
+      class="col q-ml-md q-ma-lg"
     >
-      <div v-if="showChangePasswordFields">
-        <q-input class="col-grow q-ma-md" type="password" label="new password" name="password" v-model="password" />
-        <q-input class="col-grow q-ma-md" type="password" label="repeat new password" name="password2" v-model="password2" />
+      <div class="row">
+        <q-file
+          @input="onNewAvatarSelected"
+          @rejected="onNewAvatarRejected"
+          ref="avatar_picker"
+          class="hidden"
+          accept="image/png,image/jpeg"
+          max-file-size=2097152
+        />
+        <q-avatar
+          @mouseenter="setMouseOverAvatar(true)"
+          @mouseleave="setMouseOverAvatar(false)"
+          size="100px"
+          class="q-ma-md"
+        >
+          <q-img
+            :src="avatar_url"
+            @error="onAvatarError"
+            ratio="1"
+          >
+            <transition
+              enter-active-class="animated fadeIn"
+              leave-active-class="animated fadeOut"
+            >
+              <div
+                v-if="isMouseOverAvatar"
+                
+                @click="onChangeAvatarClick"
+                class="absolute-full text-subtitle1 flex flex-center"
+                style="cursor: pointer"
+              >
+                Change
+              </div>
+            </transition>
+            <transition
+              enter-active-class="animated fadeIn"
+              leave-active-class="animated fadeOut"
+            >
+              <div
+                v-if="!avatar_url && !isMouseOverAvatar"
+                
+                @click="onChangeAvatarClick"
+                class="absolute-full text-subtitle1 flex flex-center"
+                style="cursor: pointer"
+              >
+                Avatar
+              </div>
+            </transition>
+            
+          </q-img>
+        </q-avatar>
+        <q-input class="col-grow q-ma-md" label="name" name="name" v-model="name"/>
       </div>
-    </transition>
-    <q-input class="col-grow q-ma-md" type="password" label="current password" name="oldPassword" v-model="oldPassword" required />
+      <q-input class="col-grow q-ma-md" type="email" label="email" name="email" v-model="email"/>
+      
+      <transition
+        enter-active-class="animated fadeInDown"
+        leave-active-class="animated fadeOutRight"
+      >
+        <div v-if="showChangePasswordFields">
+          <q-input class="col-grow q-ma-md" type="password" label="new password" name="password" v-model="password" />
+          <q-input class="col-grow q-ma-md" type="password" label="repeat new password" name="password2" v-model="password2" />
+        </div>
+      </transition>
+      <q-input class="col-grow q-ma-md" type="password" label="current password" name="oldPassword" v-model="oldPassword" required />
 
 
-    <q-btn color="green" type="submit" class="col-grow q-ma-md"> Submit </q-btn>
-    <q-btn type="reset" class="col-grow q-ma-md"> Reset </q-btn>
-    <q-btn @click="onChangePasswordClick" class="col-grow q-ma-md">
-      <div v-if="showChangePasswordFields"> Cancel </div>
-      <div v-else> Change password </div>
-    </q-btn>
-    <q-btn color="red" to="/deleteAccount" class="col-grow q-ma-md"> Delete account </q-btn>
-  </q-form>
+      <q-btn color="green" type="submit" class="col-grow q-ma-md"> Submit </q-btn>
+      <q-btn type="reset" class="col-grow q-ma-md"> Reset </q-btn>
+      <q-btn @click="onChangePasswordClick" class="col-grow q-ma-md">
+        <div v-if="showChangePasswordFields"> Cancel </div>
+        <div v-else> Change password </div>
+      </q-btn>
+      <q-btn color="red" to="/deleteAccount" class="col-grow q-ma-md"> Delete account </q-btn>
+    </q-form>
+  </q-page>
 </template>
 <script>
 async function fileObjectToImgBlob(file) {

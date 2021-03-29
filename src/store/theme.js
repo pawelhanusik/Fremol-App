@@ -8,7 +8,7 @@ export default {
   },
   getters: {
     primaryColor: state => state.primaryColor,
-    secondary: state => state.secondaryColor
+    secondaryColor: state => state.secondaryColor
   },
   mutations: {
     SET_PRIMARYCOLOR(state, primaryColor) {

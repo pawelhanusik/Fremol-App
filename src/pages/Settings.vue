@@ -1,124 +1,93 @@
 <template>
   <q-page>
-    
-    <div class="flex flex-center">
-      <q-card>
-        <q-card-section>
-          <h3> Settings </h3>
-        </q-card-section>
-        <q-card v-if="isSectionVisible(0)">
-          <q-card-actions>
-            <q-btn @click="onRollBtnClick(0)" size="sm" color="primary" padding="none" :icon="getRollBtnIcon(0)" class="q-mr-sm" />
-            <div class="text-h6">App settings</div>
-          </q-card-actions>
-          <q-card-section v-if="!isSectionRolledUp(0)">
-            <native-form
-              submitLabel="Connect"
-              formPurpose="appSettings"
-              :submit="submitAppSettingsForm"
-              :items="[
-                {
-                  name: 'host',
-                  type: 'text',
-                  label: 'server address',
-                  required: true
-                },
-                {
-                  name: 'apiPort',
-                  type: 'number',
-                  min: 0,
-                  max: 65535,
-                  label: 'api port',
-                  required: true
-                },
-                {
-                  name: 'wsPort',
-                  type: 'number',
-                  min: 0,
-                  max: 65535,
-                  label: 'websockets port',
-                  required: true
-                },
-                {
-                  name: 'useHttps',
-                  type: 'checkbox',
-                  label: 'use https'
-                },
-                /*{
-                  name: 'cert',
-                  type: 'file',
-                  label: 'Select certificate file',
-                  depentsOn: 3
-                }*/
-              ]"
-            />
-          </q-card-section>
-        </q-card>
-        <q-card v-if="isSectionVisible(2)">
-          <q-card-actions>
-            <q-btn @click="onRollBtnClick(2)" size="sm" color="primary" padding="none" :icon="getRollBtnIcon(2)" class="q-mr-sm" />
-            <div class="text-h6">Theme settings</div>
-          </q-card-actions>
-          <q-card-section v-if="!isSectionRolledUp(2)">
-            <q-btn
-              label="Restore defaults"
-              @click="themeSettingsRestoreDefaults"
-            />
-            <native-form
-              formPurpose="custom"
-              submitLabel="Change"
-              :submit="submitThemeSettingsForm"
-              :initValues="[
-                getBrand('primary'),
-                getBrand('secondary')
-              ]"
-              :items="[
-                {
-                  name: 'primary',
-                  type: 'color',
-                  label: 'primary color',
-                  required: true
-                },
-                {
-                  name: 'secondary',
-                  type: 'color',
-                  label: 'secondary color',
-                  required: true
-                },
-              ]"
-            />
-          </q-card-section>
-        </q-card>
+    <!-- APP SETTINGS -->
+    <div class="text-center text-h6 q-mt-lg">App settings</div>
+    <q-form
+      @submit="onAppSettingsSubmit"
+      @reset="onAppSettingsReset"
+      class="q-pa-lg"
+    >
+      <q-input v-model="host" name="host" type="text" label="server address" required />
+      <q-input v-model="apiPort" name="apiPort" type="number" min=0 max=65535 label="api port" required />
+      <q-input v-model="wsPort" name="wsPort" type="number" min=0 max=65535 label="websockets port" required />
+      <q-checkbox v-model="useHttps" label="use https" />
 
-      </q-card>
-    </div>
-    
+      <q-btn class="row q-mt-md" type="submit"> Connect </q-btn>
+    </q-form>
+    <!-- THEME SETTINGS -->
+    <div class="text-center text-h6">Theme settings</div>
+    <q-form
+      @submit="onThemeSettingsSubmit"
+      @reset="onThemeSettingsReset"
+      class="q-pa-lg"
+    >
+      <q-input
+        name="theme_primary"
+        label="primary color"
+        v-model="theme_primary"
+      >
+        <template v-slot:prepend>
+          <q-icon :name="themeColorSquarePrimary" />
+        </template>
+        <template v-slot:append>
+          <q-icon name="colorize" class="cursor-pointer">
+            <q-popup-proxy transition-show="scale" transition-hide="scale">
+              <q-color v-model="theme_primary" />
+            </q-popup-proxy>
+          </q-icon>
+        </template>
+      </q-input>
+      <q-input
+        name="theme_secondary"
+        label="secondary color"
+        v-model="theme_secondary"
+      >
+        <template v-slot:prepend>
+          <q-icon :name="themeColorSquareSecondary" />
+        </template>
+        <template v-slot:append>
+          <q-icon name="colorize" class="cursor-pointer">
+            <q-popup-proxy transition-show="scale" transition-hide="scale">
+              <q-color v-model="theme_secondary" />
+            </q-popup-proxy>
+          </q-icon>
+        </template>
+      </q-input>
+
+      <div class="row q-mt-sm">
+        <q-btn class="row q-ma-sm" type="submit"> Change </q-btn>
+        <q-btn class="row q-ma-sm" type="reset"> Reset </q-btn>
+        <q-btn class="row q-ma-sm" @click="onThemeSettingsRestoreDefaults"> Restore defaults </q-btn>
+      </div>
+    </q-form>
   </q-page>
 </template>
 
 <script>
-import NativeForm from 'src/components/NativeForm.vue'
-
 export default {
-  components: { NativeForm },
   name: 'Settings',
   data() {
     return {
-      sections: [
-        {
-          rolled: false,
-          visible: true
-        },
-        {},
-        {
-          rolled: false,
-          visible: true
-        }
-      ]
+      // app settings
+      host: this.$store.getters['server/host'],
+      apiPort: this.$store.getters['server/apiPort'],
+      wsPort: this.$store.getters['server/wsPort'],
+      useHttps: this.$store.getters['server/useHttps'], 
+      // theme settings
+      theme_primary: this.$store.getters['theme/primaryColor'],
+      theme_secondary: this.$store.getters['theme/secondaryColor']
+    }
+  },
+  computed: {
+    themeColorSquarePrimary() {
+      return `M0 0h24v24H0V0z@@fill:${this.theme_primary};stroke:${this.theme_primary}`
+    },
+    themeColorSquareSecondary() {
+      return `M0 0h24v24H0V0z@@fill:${this.theme_secondary};stroke:${this.theme_secondary}`
     }
   },
   methods: {
-    submitAppSettingsForm: function(evt) {
+    onAppSettingsSubmit: function(evt) {
       const formData = new FormData(evt.target)
       if(
         !formData.has('host')
@@ -139,37 +108,27 @@ export default {
       
       this.$store.dispatch('server/connect', serverData)
     },
-    submitThemeSettingsForm(evt) {
+    onAppSettingsReset() {
+      this.host = this.$store.getters['server/host'],
+      this.apiPort = this.$store.getters['server/apiPort'],
+      this.wsPort = this.$store.getters['server/wsPort'],
+      this.useHttps = this.$store.getters['server/useHttps']
+    },
+
+    onThemeSettingsSubmit(evt) {
       const formData = new FormData(evt.target)
       const themeData = {
-        primaryColor: formData.get('primary') || null,
-        secondaryColor: formData.get('secondary') || null,
+        primaryColor: formData.get('theme_primary') || null,
+        secondaryColor: formData.get('theme_secondary') || null,
       }
       this.$store.dispatch('theme/changeTheme', themeData)
     },
-    themeSettingsRestoreDefaults() {
+    onThemeSettingsReset() {
+      this.theme_primary = this.$store.getters['theme/primaryColor'],
+      this.theme_secondary = this.$store.getters['theme/secondaryColor']
+    },
+    onThemeSettingsRestoreDefaults() {
       this.$store.dispatch('theme/restoreDefaults')
-    },
-    getRollBtnIcon(sectionID) {
-      return (this.sections[sectionID].rolled) ? 'keyboard_arrow_right' : 'keyboard_arrow_down'
-    },
-    isSectionVisible(sectionID) {
-      return this.sections[sectionID].visible
-    },
-    isSectionRolledUp(sectionID) {
-      return this.sections[sectionID].rolled
-    },
-    onRollBtnClick(sectionID) {
-      this.sections[sectionID].rolled = !this.sections[sectionID].rolled
-    },
-    getBrand(s) {
-      if (s == 'primary') {
-        return this.$store.getters['theme/primaryColor']
-      }
-      if (s == 'secondary') {
-        return this.$store.getters['theme/secondaryColor']
-      }
-      return '';
     }
   }
 }
