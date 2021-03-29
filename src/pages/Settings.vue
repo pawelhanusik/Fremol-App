@@ -10,7 +10,7 @@
       <q-input v-model="host" name="host" type="text" label="server address" required />
       <q-input v-model="apiPort" name="apiPort" type="number" min=0 max=65535 label="api port" required />
       <q-input v-model="wsPort" name="wsPort" type="number" min=0 max=65535 label="websockets port" required />
-      <q-checkbox v-model="useHttps" label="use https" />
+      <q-checkbox v-model="useHttps" name="useHttps" label="use https" />
 
       <q-btn class="row q-mt-md" type="submit"> Connect </q-btn>
     </q-form>
@@ -102,8 +102,7 @@ export default {
         host: formData.get('host'),
         useHttps: formData.get('useHttps') || false,
         apiPort: formData.get('apiPort'),
-        wsPort: formData.get('wsPort'),
-        cert: formData.get('cert') || null
+        wsPort: formData.get('wsPort')
       }
       
       this.$store.dispatch('server/connect', serverData)
