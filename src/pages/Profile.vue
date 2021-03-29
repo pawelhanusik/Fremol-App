@@ -7,9 +7,11 @@
     <div class="row">
       <q-file
         @input="onNewAvatarSelected"
+        @rejected="onNewAvatarRejected"
         ref="avatar_picker"
         class="hidden"
         accept="image/png,image/jpeg"
+        max-file-size=2097152
       />
       <q-avatar
         @mouseenter="setMouseOverAvatar(true)"
@@ -19,7 +21,7 @@
       >
         <q-img
           :src="avatar_url"
-          alt="aaa"
+          @error="onAvatarError"
           ratio="1"
         >
           <transition
@@ -66,7 +68,7 @@
         <q-input class="col-grow q-ma-md" type="password" label="repeat new password" name="password2" v-model="password2" />
       </div>
     </transition>
-    <q-input class="col-grow q-ma-md" type="password" label="current password" name="oldPassword" v-model="oldPassword" />
+    <q-input class="col-grow q-ma-md" type="password" label="current password" name="oldPassword" v-model="oldPassword" required />
 
 
     <q-btn color="green" type="submit" class="col-grow q-ma-md"> Submit </q-btn>
@@ -111,6 +113,9 @@ export default {
     setMouseOverAvatar(b) {
       this.isMouseOverAvatar = b
     },
+    onAvatarError(evt) {
+      this.avatar_url = ""
+    },
     onChangeAvatarClick() {
       const avatarPicker = this.$refs['avatar_picker']
       avatarPicker.pickFiles()
@@ -120,6 +125,24 @@ export default {
         this.avatar_url = imageBlob
         this.avatar = evt
       })
+    },
+    onNewAvatarRejected(evt) {
+      let errorMsg = ""
+      for (let err of evt) {
+        if (err.failedPropValidation) {
+          switch (err.failedPropValidation) {
+          case 'accept':
+            errorMsg += "Selected file must be an image" + "\n"
+            break
+          case 'max-file-size':
+            errorMsg += "Selected image should be smaller than 2MB" + "\n"
+            break
+          }
+        }
+      }
+      if (errorMsg.length > 0) {
+        this.$q.notify(errorMsg)
+      }
     },
 
     onSubmit(evt) {
