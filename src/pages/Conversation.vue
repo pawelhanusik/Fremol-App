@@ -97,6 +97,7 @@ export default {
 
         const newMessageGroup = new MessageGroupClass({
           propsData: {
+            current_user_id: this.$store.getters['user/id'],
             messages: messages
           }
         })
@@ -195,6 +196,7 @@ export default {
             const messageGroupsContainer = this.$refs['message_containers_div']
             const newMessageGroup = new MessageGroupClass({
               propsData: {
+                current_user_id: this.$store.getters['user/id'],
                 messages: [e.message]
               }
             })

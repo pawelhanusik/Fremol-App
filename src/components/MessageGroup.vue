@@ -6,11 +6,18 @@
       :id="'message_' + msg.id"
       :key="msgID"
 
+
+      :user_id="parseInt(msg.user_id)"
       :user="msg.user"
+      :sent="current_user_id == msg.user_id"
+
       :text="msg.text"
+
       :attachment_mime="msg.attachment_mime"
       :attachment_url="msg.attachment_url"
       :attachment_thumbnail="msg.attachment_thumbnail"
+
+      :created_at="msg.created_at"
     />
   </div>
 </template>
@@ -26,6 +33,10 @@ export default {
     messages: {
       type: Array[{}],
       required: true
+    },
+    current_user_id: {
+      type: Number,
+      default: -1
     }
   }
 }
