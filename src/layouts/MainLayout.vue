@@ -41,15 +41,16 @@
         >
           Fremol
         </q-item-label>
-        <route-link
-          v-for="link in routeLinks"
-          :key="link.title"
-          v-bind="link"
-        />
+        <div v-for="(link, key) in routeLinks" :key="key">
+          <route-link
+            v-if="link.requiresAuth === false || isUserLoggedIn()"
+            v-bind="link"
+          />
+        </div>
       </q-list>
 
       <!-- CHATS -->
-      <q-list v-if="conversations.length > 0">
+      <q-list v-if="isUserLoggedIn()">
         <q-item-label
           header
           class="text-grey-8"
@@ -112,22 +113,26 @@ const routeLinksData = [
   {
     title: 'Home',
     icon: 'home',
-    link: '/'
+    link: '/',
+    requiresAuth: false
   },
   {
     title: 'Profile',
     icon: 'person',
-    link: '/profile'
+    link: '/profile',
+    requiresAuth: true
   },
   {
     title: 'Settings',
     icon: 'settings',
-    link: '/settings'
+    link: '/settings',
+    requiresAuth: false
   },
   {
     title: 'Logout',
     icon: 'logout',
-    link: '/logout'
+    link: '/logout',
+    requiresAuth: true
   }
 ];
 const linksData = [
@@ -174,6 +179,14 @@ export default {
         icon: 'add',
         link: '/newConversation'
       }
+    }
+  },
+  methods: {
+    isUserLoggedIn() {
+      if ( typeof(this.$store) !== 'undefined' && this.$store !== null && this.$store.getters['server/isConnected']) {
+        return this.$store.getters['user/isLoggedIn']
+      }
+      return false
     }
   }
 }
