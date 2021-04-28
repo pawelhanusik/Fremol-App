@@ -61,7 +61,7 @@ export default {
         this.$store.getters['server/host'],
         this.$store.getters['server/apiPort'],
         this.$store.getters['server/wsPort'],
-        this.$store.getters['server/useHttps'],
+        true,
       ]
     } else if (this.formPurpose == 'custom') {
       this.values = this.initValues

@@ -8,7 +8,7 @@ const echo = new Echo({
   key: 'websocketkey',
   cluster: 'main',
   wsHost: '',
-  wsPort: 0,
+  wssPort: 0,
   disableStats: true,
   authEndpoint: '',
   auth: {

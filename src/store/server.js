@@ -4,7 +4,6 @@ export default {
   namespaced: true,
   state: {
     host: LocalStorage.getItem('server_host') || '',
-    useHttps: LocalStorage.getItem('server_useHttps') || true,
     apiPort: LocalStorage.getItem('server_apiPort') || '',
     wsPort: LocalStorage.getItem('server_wsPort') || '',
     isConnected: false,
@@ -13,18 +12,15 @@ export default {
   },
   getters: {
     host: state => state.host,
-    useHttps: state => state.useHttps,
     wsHost: state => state.host,
     apiPort: state => state.apiPort,
     wsPort: state => state.wsPort,
     
     axiosBaseURL: state => {
-      const protocol = state.useHttps ? 'https' : 'http'
-      return `${protocol}://${state.host}:${state.apiPort}/api`
+      return `https://${state.host}:${state.apiPort}/api`
     },
     echoAuthEndpoint: state => {
-      const protocol = state.useHttps ? 'https' : 'http'
-      return `${protocol}://${state.host}:${state.apiPort}/broadcasting/auth`
+      return `https://${state.host}:${state.apiPort}/broadcasting/auth`
     },
 
     isConnected: state => state.isConnected,
@@ -35,10 +31,6 @@ export default {
     SET_HOST(state, host) {
       state.host = host
       LocalStorage.set('server_host', state.host)
-    },
-    SET_USEHTTPS(state, useHttps) {
-      state.useHttps = useHttps
-      LocalStorage.set('server_useHttps', state.useHttps)
     },
     SET_APIPORT(state, apiPort) {
       state.apiPort = apiPort
@@ -65,7 +57,6 @@ export default {
         context.dispatch('disconnect')
       }
       context.commit('SET_HOST', payload.host)
-      context.commit('SET_USEHTTPS', payload.useHttps)
       context.commit('SET_APIPORT', payload.apiPort)
       context.commit('SET_WSPORT', payload.wsPort)
 
@@ -89,7 +80,6 @@ export default {
     },
     setEchoHostOptions(context) {
       this._vm.$echo.options.wsHost = context.getters['wsHost']
-      this._vm.$echo.options.wsPort = context.getters['wsPort']
       this._vm.$echo.options.wssPort = context.getters['wsPort']
       this._vm.$echo.options.authEndpoint = context.getters['echoAuthEndpoint']
       this._vm.$echo.disconnect()

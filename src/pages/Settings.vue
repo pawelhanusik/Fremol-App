@@ -10,7 +10,6 @@
       <q-input v-model="host" name="host" type="text" label="server address" required />
       <q-input v-model="apiPort" name="apiPort" type="number" min=0 max=65535 label="api port" required />
       <q-input v-model="wsPort" name="wsPort" type="number" min=0 max=65535 label="websockets port" required />
-      <q-checkbox v-model="useHttps" name="useHttps" label="use https" />
 
       <q-btn class="row q-mt-md" type="submit"> Connect </q-btn>
     </q-form>
@@ -72,7 +71,6 @@ export default {
       host: this.$store.getters['server/host'],
       apiPort: this.$store.getters['server/apiPort'],
       wsPort: this.$store.getters['server/wsPort'],
-      useHttps: this.$store.getters['server/useHttps'], 
       // theme settings
       theme_primary: this.$store.getters['theme/primaryColor'],
       theme_secondary: this.$store.getters['theme/secondaryColor']
@@ -100,7 +98,6 @@ export default {
 
       const serverData = {
         host: formData.get('host'),
-        useHttps: formData.get('useHttps') || false,
         apiPort: formData.get('apiPort'),
         wsPort: formData.get('wsPort')
       }
@@ -110,8 +107,7 @@ export default {
     onAppSettingsReset() {
       this.host = this.$store.getters['server/host'],
       this.apiPort = this.$store.getters['server/apiPort'],
-      this.wsPort = this.$store.getters['server/wsPort'],
-      this.useHttps = this.$store.getters['server/useHttps']
+      this.wsPort = this.$store.getters['server/wsPort']
     },
 
     onThemeSettingsSubmit(evt) {

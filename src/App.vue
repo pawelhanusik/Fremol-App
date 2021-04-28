@@ -37,7 +37,6 @@ export default {
       // update axios & laravel echo connection
       if (
         mutation.type == 'server/SET_HOST'
-        || mutation.type == 'server/SET_USEHTTPS'
         || mutation.type == 'server/SET_APIPORT'
         || mutation.type == 'server/SET_WSPORT'
       ) {
