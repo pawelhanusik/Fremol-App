@@ -1,12 +1,10 @@
 export default {
   namespaced: true,
   state: {
-    isFetching: false,
     user: {},
     isLoggedIn: false
   },
   getters: {
-    isFetching: state => state.isFetching,
     isLoggedIn: state => state.isLoggedIn,
     user: state => state.user,
     id: state => state.user.id || -1,
@@ -15,9 +13,6 @@ export default {
     name: state => state.user.name || '',
   },
   mutations: {
-    SET_ISFETCHING (state, isFetching) {
-      state.isFetching = isFetching
-    },
     SET_ISLOGGEDIN (state, isLoggedIn) {
       state.isLoggedIn = isLoggedIn
     },
@@ -30,43 +25,37 @@ export default {
     }
   },
   actions: {
-    login(context, loginData) {
-      context.commit('SET_ISFETCHING', true)
-      this._vm.$api.post('/login', loginData).then(response => {
-        if (response.status === 200) {
-          this._vm.$q.notify('Logged in')
-          context.commit('server/SET_TOKEN', response.data.token, { root: true })
-          context.dispatch('fetchUserData')
-          context.dispatch('conversations/fetchConversations', null, { root: true })
-          
-          this.$router.push({path: '/'})
-        } else {
-          this._vm.$q.notify('Invalid credentials. EEE')
-        }
-        context.commit('SET_ISFETCHING', false)
-      }).catch(error => {
-        this._vm.$q.notify('Invalid credentials.')
-        context.commit('SET_ISFETCHING', false)
-      });
+    async login(context, loginData) {
+      return new Promise((resolve, reject) => {
+        this._vm.$api.post('/login', loginData).then(response => {
+          if (response.status === 200) {
+            context.commit('server/SET_TOKEN', response.data.token, { root: true })
+            context.dispatch('fetchUserData')
+            context.dispatch('conversations/fetchConversations', null, { root: true })
+            
+            resolve()
+          } else {
+            reject()
+          }
+        }).catch(() => {
+          reject()
+        })
+      })
     },
-    register(context, registerData) {
-      context.commit('SET_ISFETCHING', true)
-      this._vm.$api.post('/register', registerData).then(response => {
-        if (response.status === 200) {
-          this._vm.$q.notify('User registered. Plesase log in.')
-          this._vm.$router.push({path: '/login'})
-        } else {
-          this._vm.$q.notify('Cannot register')
-        }
-        context.commit('SET_ISFETCHING', false)
-      }).catch(err => {
-        console.log(err, response)
-        this._vm.$q.notify('Cannot register')
-        context.commit('SET_ISFETCHING', false)
-      });
+    async register(context, registerData) {
+      return new Promise((resolve, reject) => {
+        this._vm.$api.post('/register', registerData).then(response => {
+          if (response.status === 200) {
+            resolve()
+          } else {
+            reject()
+          }
+        }).catch(() => {
+          reject()
+        })
+      })
     },
     fetchUserData (context) {
-      context.commit('SET_ISFETCHING', true)
       this._vm.$api.get('/user').then(response => {
         console.log('logged in response:', response)
         if (response.status === 200) {
@@ -75,42 +64,40 @@ export default {
         } else {
           context.dispatch('clearData')
         }
-        context.commit('SET_ISFETCHING', false)
       }).catch(err => {
         context.dispatch('clearData')
-        context.commit('SET_ISFETCHING', false)
       })
     },
-    updateSettings (context, updatedUserData) {
-      let userId = context.getters['id']
-      context.commit('SET_ISFETCHING', true)
-      this._vm.$api.post(`/users/${userId}/update`, updatedUserData).then(response => {
-        if (response.status === 200) {
-          this._vm.$q.notify('Updated settings')
-          context.dispatch('fetchUserData')
-        } else {
-          this._vm.$q.notify('Cannot update settings')
-        }
-        context.commit('SET_ISFETCHING', false)
-      }).catch(error => {
-        this._vm.$q.notify('Cannot update settings')
-        context.commit('SET_ISFETCHING', false)
+    async updateSettings (context, updatedUserData) {
+      return new Promise((resolve, reject) => {
+        const userId = context.getters['id']
+        this._vm.$api.post(`/users/${userId}/update`, updatedUserData).then(response => {
+          if (response.status === 200) {
+            context.dispatch('fetchUserData')
+            resolve()
+          } else {
+            reject()
+          }
+        }).catch(() => {
+          reject()
+        })
       })
     },
     
-    logout(context, config = {}) {
-      this._vm.$api.post('/logout', {}, config).then(response => {
-        context.dispatch('clearData')
-
-        this._vm.$q.notify('Logged out!')
-      }).catch(error => {
-        this._vm.$q.notify('Cannot logout')
-      });
+    async logout(context, config = {}) {
+      return new Promise((resolve, reject) => {
+        this._vm.$api.post('/logout', {}, config).then(() => {
+          context.dispatch('clearData')
+          resolve()
+        }).catch(() => {
+          reject()
+        });
+      })
     },
     forceLogout(context, config = {}) {
       console.log('FORCE LOGOUT')
-      this._vm.$api.post('/logout', {}, config).then(response => {
-      }).catch(error => {
+      this._vm.$api.post('/logout', {}, config).then(() => {
+      }).catch(() => {
       });
       context.dispatch('clearData')
     },

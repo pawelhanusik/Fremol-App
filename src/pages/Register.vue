@@ -13,7 +13,7 @@
           <q-input class="col-grow q-ma-md" type="email" label="email" name="email" v-model="email" required />
           <q-input class="col-grow q-ma-md" type="text" label="name" name="name" v-model="name" required />
           <q-input class="col-grow q-ma-md" type="password" label="password" name="password" v-model="password" required />
-          <q-input class="col-grow q-ma-md" type="password" label="retype password" name="password2" v-model="password2" required />
+          <q-input class="col-grow q-ma-md" type="password" label="repeat password" name="password2" v-model="password2" required />
           <q-btn label="Register" type="submit" color="primary"/>
         </q-form>
         <q-item
@@ -66,7 +66,12 @@ export default {
         return
       }
 
-      this.$store.dispatch('user/register', registerData)
+      this.$store.dispatch('user/register', registerData).then(() => {
+        this.$q.notify('User registered. Plesase log in.')
+        this.$router.push({path: '/login'})
+      }).catch(() => {
+        this.$q.notify('Cannot register')
+      })
       
     }
   }

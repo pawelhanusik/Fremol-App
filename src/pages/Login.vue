@@ -55,6 +55,11 @@ export default {
       this.$store.dispatch('user/login', {
         email: this.email,
         password: this.password
+      }).then(() => {
+        this.$q.notify('Logged in')
+        this.$router.push({path: '/'})
+      }).catch(() => {
+        this.$q.notify('Invalid credentials.')
       })
     }
   }

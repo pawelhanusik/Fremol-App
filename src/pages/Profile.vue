@@ -178,9 +178,15 @@ export default {
           return
         }
       }
-
-      console.log("SENDING FORM DATA", formData)
-      this.$store.dispatch('user/updateSettings', formData)
+      
+      this.$store.dispatch('user/updateSettings', formData).then(() => {
+        this.$q.notify('Updated settings')
+        this.password = ''
+        this.password2 = ''
+        this.oldPassword = ''
+      }).catch(() => {
+        this.$q.notify('Cannot update settings')
+      })
     },
     onReset() {
       this.name = this.$store.getters['user/name']

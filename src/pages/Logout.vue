@@ -19,8 +19,12 @@
 export default {
   name: 'Logout',
   created() {
-    this.$store.dispatch('user/logout')
-    this.$router.push('/')
+    this.$store.dispatch('user/logout').then(() => {
+      this.$q.notify('Logged out!')
+      this.$router.push('/')
+    }).catch(() => {
+      this.$q.notify('Cannot logout')
+    })
   }
 }
 </script>
