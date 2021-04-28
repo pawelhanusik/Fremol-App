@@ -41,7 +41,7 @@ export default {
           context.dispatch('fetchConversations')
             .then(() => {
               resolve(response.data.conversation.id)
-            })          
+            })
         }).catch(err => {
           reject()
         })
@@ -52,9 +52,9 @@ export default {
         this._vm.$api.put(`/user/conversations/${conversationData.id}`, conversationData).then(response => {
           context.dispatch('fetchConversations')
             .then(() => {
-              resolve(response.data.conversation.id)
-            })          
-        }).catch(err => {
+              resolve()
+            })
+        }).catch(() => {
           reject()
         })
       })

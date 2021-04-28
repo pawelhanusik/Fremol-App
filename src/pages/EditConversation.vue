@@ -88,9 +88,9 @@ export default {
         participants: this.inputParticipants
       }
 
-      this.$store.dispatch('conversations/editConversation', conversationData).then(conversationID => {
+      this.$store.dispatch('conversations/editConversation', conversationData).then(() => {
         this.$q.notify('Conversation created')
-        this.$router.push('/conversations/' + conversationID)
+        this.$router.push('/conversations/' + this.$route.params.conversationID)
       }).catch(err => {
         this.$q.notify('Cannot create conversation: error occurred')
         this.$router.push('/')
