@@ -1,50 +1,38 @@
 <template>
-  <q-page class="flex flex-center">
-    
-    <q-card class="full-height">  
-      <q-card-section>
-        <h3> Are you sure you want do delete your account? </h3>
-      </q-card-section>
+  <q-page class="flex flex-center col">
+    <div>
+      <div class="row">
+        <div class="text-center text-h3 q-mt-lg"> Are you sure you want do delete your account? </div>
+      </div>
 
-      <q-card-section>
+      <div class="row q-mt-sm">
         <p>Type in "yes" into text box to confirm</p>
+      </div>
+      <div class="row">
         <q-input
           name="confirmation"
           label="confirm"
           v-model="confirmation"
         />
-      </q-card-section>
-      
-      <q-card-section>
-        <table>
-          <tr>
-            <td>
-              <q-btn color="red" @click="removeAccount"> Yes, delete my account </q-btn>
-            </td>
-            <td>
-              <q-btn @click="cancel"> No, go back </q-btn>
-            </td>
-          </tr>
-        </table>
-      </q-card-section>
-    </q-card>
-
+      </div>
+      <div class="row q-mt-sm">
+        <div class="col">
+          <q-btn color="red" @click="removeAccount"> Yes, delete my account </q-btn>
+          <q-btn class="q-ml-sm" @click="cancel"> No, go back </q-btn>
+        </div>
+      </div>
+    </div>
   </q-page>
 </template>
 
 <script>
-import NativeForm from 'src/components/NativeForm.vue'
-
 export default {
-  components: { NativeForm },
   name: 'Login',
-
   data() {
     return {
       confirmation: ''
     }
   },
-
   methods: {
     removeAccount() {
       if (this.confirmation !== 'yes') {

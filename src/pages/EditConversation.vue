@@ -1,11 +1,11 @@
 <template>
-  <q-page>
-    <div class="flex flex-center">
-      <q-card>
-        <q-card-section>
+  <q-page class="q-ma-lg">
+    <div class="q-mt-lg flex flex-center">
+      <div>
+        <div>
           <div class="text-h4"> Edit conversation </div>
-        </q-card-section>
-        <q-card-section>
+        </div>
+        <div>
           <div class="q-pa-md">
             <q-form @submit="submitEditConversationForm" @reset="resetEditConversationForm" class="q-gutter-md">
               <q-input
@@ -15,10 +15,8 @@
                 color="primary"
                 label="name"
                 required
-                filled
               />
               <q-select
-                filled
                 name="participants"
                 v-model="inputParticipants"
                 multiple
@@ -37,18 +35,15 @@
               <q-btn label="Cancel" @click="cancelFormEdit" color="red"/>
             </q-form>
           </div>
-        </q-card-section>
-      </q-card>
+        </div>
+      </div>
     </div>
     
   </q-page>
 </template>
 
 <script>
-import NativeForm from 'src/components/NativeForm.vue'
-
 export default {
-  components: { NativeForm },
   name: 'EditConversation',
   data() {
     return {

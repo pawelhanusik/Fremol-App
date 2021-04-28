@@ -13,8 +13,6 @@ const routes = [
       { path: '/settings', component: () => import('pages/Settings.vue') },
       { path: '/deleteAccount', component: () => import('pages/DeleteAccount.vue'), meta: {requiresAuth: true} },
       
-      { path: '/test', component: () => import('pages/Test.vue') },
-      
       { path: '/newConversation', component: () => import('pages/NewConversation.vue'), meta: {requiresAuth: true} },
       { path: '/editConversation/:conversationID', component: () => import('pages/EditConversation.vue'), meta: {requiresAuth: true} },
       { path: '/conversations/:conversationID', name: 'conversations', component: () => import('pages/Conversation.vue'), meta: {requiresAuth: true} },

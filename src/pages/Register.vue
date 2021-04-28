@@ -1,81 +1,68 @@
 <template>
   <q-page class="flex flex-center">
     
-    <q-card class="full-height">  
-      <q-card-section>
+    <div class="full-height">  
+      <div>
         <img
           alt="Fremol logo"
           src="~assets/logo.svg"
         >
-      </q-card-section>
-      
-      <q-card-section>
-        <native-form
-          :items="[
-            {
-              name: 'email',
-              type: 'text',
-              label: 'email',
-            },
-            {
-              name: 'name',
-              type: 'text',
-              label: 'name'
-            },
-            {
-              name: 'password',
-              type: 'password',
-              label: 'password',
-            },
-            {
-              name: 'password2',
-              type: 'password',
-              label: 'repeat password',
-            }
-          ]"
-          :submit="submitRegisterForm"
-        />
+      </div>
+      <div>
+        <q-form @submit="submitRegisterForm" class="q-gutter-md">
+          <q-input class="col-grow q-ma-md" type="email" label="email" name="email" v-model="email" required />
+          <q-input class="col-grow q-ma-md" type="text" label="name" name="name" v-model="name" required />
+          <q-input class="col-grow q-ma-md" type="password" label="password" name="password" v-model="password" required />
+          <q-input class="col-grow q-ma-md" type="password" label="retype password" name="password2" v-model="password2" required />
+          <q-btn label="Register" type="submit" color="primary"/>
+        </q-form>
         <q-item
           to="/login"
           clickable
           tag="a"
         > Already have an account? Login </q-item>
-      </q-card-section>
-    </q-card>
+      </div>
+    </div>
 
   </q-page>
 </template>
 
 <script>
-import NativeForm from 'src/components/NativeForm.vue'
-
 export default {
-  components: { NativeForm },
   name: 'Register',
-  
+  data() {
+    return {
+      email: '',
+      name: '',
+      password: '',
+      password2: ''
+    }
+  },
   methods: {
     submitRegisterForm(evt) {
       const formData = new FormData(evt.target)
       
       if(
-        !formData.has('email')
-        || !formData.has('name')
-        || !formData.has('password')
-        || !formData.has('password2')
+        this.email == ''
+        || this.name == ''
+        || this.password == ''
+        || this.password2 == ''
       ) {
         this.$q.notify('Please fill in all fields')
         return
       }
 
       const registerData = {
-        email: formData.get('email'),
-        name: formData.get('name'),
-        password: formData.get('password'),
-        password2: formData.get('password2')
+        email: this.email,
+        name: this.name,
+        password: this.password,
+        password2: this.password2
       }
 
       if (registerData.password !== registerData.password2) {
         this.$q.notify('Passwords doesn\'t match!')
+        this.password = ''
+        this.password2 = ''
         return
       }
 

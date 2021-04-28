@@ -1,5 +1,5 @@
 <template>
-  <div class="fullscreen bg-blue text-white text-center q-pa-md flex flex-center">
+  <div :style="'background-color: ' + primaryColor" class="fullscreen text-white text-center q-pa-md flex flex-center">
     <div>
       <div style="font-size: 30vh">
         404
@@ -12,7 +12,7 @@
       <q-btn
         class="q-mt-xl"
         color="white"
-        text-color="blue"
+        text-color="green"
         unelevated
         to="/"
         label="Go Home"
@@ -24,6 +24,12 @@
 
 <script>
 export default {
-  name: 'Error404'
+  name: 'Error404',
+  data() {
+    return {
+      primaryColor: this.$store.getters['theme/primaryColor'],
+      secondaryColor: this.$store.getters['theme/secondaryColor']
+    }
+  }
 }
 </script>

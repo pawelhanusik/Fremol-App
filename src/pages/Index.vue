@@ -8,14 +8,7 @@
 </template>
 
 <script>
-import NativeForm from 'src/components/NativeForm.vue'
-
 export default {
-  components: { NativeForm },
-  name: 'PageIndex',
-
-  methods: {
-  },
-
+  name: 'PageIndex'
 }
 </script>

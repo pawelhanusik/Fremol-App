@@ -1,48 +1,38 @@
 <template>
   <q-page class="flex flex-center">
-    
-    <q-card class="full-height">  
-      <q-card-section>
+    <div class="full-height">  
+      <div>
         <img
           alt="Fremol logo"
           src="~assets/logo.svg"
         >
-      </q-card-section>
-      
-      <q-card-section>
-        <native-form
-          :items="[
-            {
-              name: 'email',
-              type: 'text',
-              label: 'email',
-            },
-            {
-              name: 'password',
-              type: 'password',
-              label: 'password',
-            }
-          ]"
-          :submit="submitLoginForm"
-        />
+      </div>
+      <div>
+        <q-form @submit="submitLoginForm" class="q-gutter-md">
+          <q-input class="col-grow q-ma-md" type="email" label="email" name="email" v-model="email"/>
+          <q-input class="col-grow q-ma-md" type="password" label="password" name="password" v-model="password" />
+          <q-btn label="Login" type="submit" color="primary"/>
+        </q-form>
         <q-item
           to="/register"
           clickable
           tag="a"
+          class="q-mt-md"
         > Don't have an account yet? Register </q-item>
-      </q-card-section>
-    </q-card>
-
+      </div>
+    </div>
   </q-page>
 </template>
 
 <script>
-import NativeForm from 'src/components/NativeForm.vue'
-
 export default {
-  components: { NativeForm },
   name: 'Login',
-
+  data() {
+    return {
+      email: '',
+      password: ''
+    }
+  },
   beforeCreate() {
     if (this.$store.getters['user/isLoggedIn']) {
       this.$router.push({path: '/'})
@@ -60,20 +50,12 @@ export default {
       }
     })
   },
-
   methods: {
     submitLoginForm(evt) {
-      const formData = new FormData(evt.target)
-      const loginData = {}
-      
-      if (formData.has('email')) {
-        loginData.email = formData.get('email')
-      }
-      if (formData.has('password')) {
-        loginData.password = formData.get('password')
-      }
-
-      this.$store.dispatch('user/login', loginData)
+      this.$store.dispatch('user/login', {
+        email: this.email,
+        password: this.password
+      })
     }
   }
 }

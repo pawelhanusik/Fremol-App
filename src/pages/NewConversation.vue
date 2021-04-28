@@ -1,52 +1,42 @@
 <template>
   <q-page>
-    <div class="flex flex-center">
-      <q-card>
-        <q-card-section>
-          <div class="text-h4"> New conversation </div>
-        </q-card-section>
-        <q-card-section>
-          <div class="q-pa-md">
-            <q-form @submit="submitCreateConversationForm" class="q-gutter-md">
-              <q-input
-                name="name"
-                type="text"
-                v-model="inputName"
-                color="primary"
-                label="name"
-                required
-                filled
-              />
-              <q-select
-                filled
-                name="participants"
-                v-model="inputParticipants"
-                multiple
-                use-input
-                input-debounce="0"
-                @filter="filterFn"
-                :options="inputParticipantsOptionsFiltered"
-                label="participants"
-                style="width: 250px"
-                behavior="dialog"
-                emit-value
-                map-options
-              />
-              <q-btn label="Create" type="submit" color="primary"/>
-            </q-form>
-          </div>
-        </q-card-section>
-      </q-card>
+    <div class="flex flex-center q-mt-lg">
+      <div>
+        <div class="text-h4"> New conversation </div>
+        <div class="q-pa-md">
+          <q-form @submit="submitCreateConversationForm" class="q-gutter-md">
+            <q-input
+              name="name"
+              type="text"
+              v-model="inputName"
+              color="primary"
+              label="name"
+              required
+            />
+            <q-select
+              name="participants"
+              v-model="inputParticipants"
+              multiple
+              use-input
+              input-debounce="0"
+              @filter="filterFn"
+              :options="inputParticipantsOptionsFiltered"
+              label="participants"
+              style="width: 250px"
+              behavior="dialog"
+              emit-value
+              map-options
+            />
+            <q-btn label="Create" type="submit" color="primary"/>
+          </q-form>
+        </div>
+      </div>
     </div>
-    
   </q-page>
 </template>
 
 <script>
-import NativeForm from 'src/components/NativeForm.vue'
-
 export default {
-  components: { NativeForm },
   name: 'NewConversation',
   data() {
     return {
