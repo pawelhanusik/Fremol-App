@@ -1,11 +1,14 @@
+import { backend } from "../../fremol.conf"
+
 import { LocalStorage } from "quasar"
+
 
 export default {
   namespaced: true,
   state: {
-    host: LocalStorage.getItem('server_host') || '',
-    apiPort: LocalStorage.getItem('server_apiPort') || '',
-    wsPort: LocalStorage.getItem('server_wsPort') || '',
+    host: LocalStorage.getItem('server_host') || backend.serverHost,
+    apiPort: LocalStorage.getItem('server_apiPort') || backend.apiPort,
+    wsPort: LocalStorage.getItem('server_wsPort') || backend.wsPort,
     isConnected: false,
 
     token: LocalStorage.getItem('token') || ''
