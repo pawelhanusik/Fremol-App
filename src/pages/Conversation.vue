@@ -176,6 +176,9 @@ export default {
             if (e.message.attachment_thumbnail) {
               e.message.attachment_thumbnail = baseURL + '/storage/' + e.message.attachment_thumbnail.substr(7)
             }
+            if (e.message.user_avatar_url) {
+              e.message.user_avatar_url = baseURL + '/storage/' + e.message.user_avatar_url.substr(7)
+            }
             const messageGroupsContainer = this.$refs['message_containers_div']
             const newMessageGroup = new MessageGroupClass({
               propsData: {
