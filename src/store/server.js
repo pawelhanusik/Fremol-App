@@ -91,6 +91,15 @@ export default {
     setAccessToken(context) {
       this._vm.$api.defaults.headers.common['Authorization'] = 'Bearer ' + context.getters['token']
       this._vm.$echo.options.auth.headers['Authorization'] = 'Bearer ' + context.getters['token']
+    },
+
+    restoreDefaults(context) {
+      LocalStorage.remove('server_host')
+      LocalStorage.remove('server_apiPort')
+      LocalStorage.remove('server_wsPort')
+      context.commit('SET_HOST', backend.serverHost)
+      context.commit('SET_APIPORT', backend.apiPort)
+      context.commit('SET_WSPORT', backend.wsPort)
     }
   }
 }

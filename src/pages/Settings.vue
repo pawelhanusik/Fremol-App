@@ -11,7 +11,11 @@
       <q-input v-model="apiPort" name="apiPort" type="number" min=0 max=65535 label="api port" required />
       <q-input v-model="wsPort" name="wsPort" type="number" min=0 max=65535 label="websockets port" required />
 
-      <q-btn class="row q-mt-md" type="submit"> Connect </q-btn>
+      <div class="row q-mt-md">
+        <q-btn class="row q-ma-sm" type="submit"> Connect </q-btn>
+        <q-btn class="row q-ma-sm" type="reset"> Reset </q-btn>
+        <q-btn class="row q-ma-sm" @click="onAppSettingsRestoreDefaults"> Restore defaults </q-btn>
+      </div>
     </q-form>
     <!-- THEME SETTINGS -->
     <div class="text-center text-h6">Theme settings</div>
@@ -105,9 +109,13 @@ export default {
       this.$store.dispatch('server/connect', serverData)
     },
     onAppSettingsReset() {
-      this.host = this.$store.getters['server/host'],
-      this.apiPort = this.$store.getters['server/apiPort'],
+      this.host = this.$store.getters['server/host']
+      this.apiPort = this.$store.getters['server/apiPort']
       this.wsPort = this.$store.getters['server/wsPort']
+    },
+    onAppSettingsRestoreDefaults() {
+      this.$store.dispatch('server/restoreDefaults')
+      this.onAppSettingsReset()
     },
 
     onThemeSettingsSubmit(evt) {
