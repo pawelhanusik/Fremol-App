@@ -104,8 +104,6 @@ export default {
     },
     clearData (context) {
       context.commit('SET_CONVERSATIONS', [])
-      context.commit('SET_MESSAGES', [])
-      context.commit('CLEAR_LAST_MESSAGE_CREATION_TIMESTAMPS')
     }
   }
 }
