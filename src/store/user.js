@@ -57,7 +57,6 @@ export default {
     },
     fetchUserData (context) {
       this._vm.$api.get('/user').then(response => {
-        console.log('logged in response:', response)
         if (response.status === 200) {
           context.commit('SET_USER', response.data)
           context.commit('SET_ISLOGGEDIN', true)
@@ -95,7 +94,6 @@ export default {
       })
     },
     forceLogout(context, config = {}) {
-      console.log('FORCE LOGOUT')
       this._vm.$api.post('/logout', {}, config).then(() => {
       }).catch(() => {
       });

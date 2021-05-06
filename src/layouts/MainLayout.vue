@@ -148,7 +148,6 @@ export default {
   },
   computed: {
     conversations() {
-      console.log(this)
       return this.$store.getters['conversations/conversationAsLinks']
     },
     title() {

@@ -66,11 +66,6 @@ export default {
     }
   },
   created() {
-    console.log('joining')
-    /*this.init()
-    previousConversationID = this.$route.params.conversationID
-    */
-
     unsubscibe = this.$store.subscribe((mutation, state) => {
       if (mutation.type == 'messages/COMPLETE_JOB') {
         const jobID = mutation.payload
@@ -148,8 +143,6 @@ export default {
   },
   methods: {
     init() {
-      console.log("INIT")
-      
       // clear
       this.oldestMessageID = null
       this.pendingJobs = []
@@ -170,22 +163,12 @@ export default {
       // join conversation's websocket channel
       this.$echo.leave()
       this.$echo.join(`conversations.${this.$route.params.conversationID}`)
-        .here((users) => {
-          console.log("WEBSOCKETS!!! HERE", users)
-        })
-        .joining((user) => {
-          console.log("WEBSOCKETS!!! JOINING", user)
-        })
-        .leaving((user) => {
-          console.log("WEBSOCKETS!!! LEAVING", user)
-        })
         .listen('MessageSent', (e) => {
-          console.log("WEBSOCKETS !!!", e);
           if (e.message.conversation_id == this.$route.params.conversationID) {
             // this.$store.commit('conversations/ADD_MESSAGES', [e.message])
             // TODO: make sure that none messages was missed
             const scrollDown = (this.isScrolledAllWayDown())
-            console.log("LOL", scrollDown)
+            
             const baseURL = this.$api.defaults.baseURL.substr(0, this.$api.defaults.baseURL.length - 4)
             if (e.message.attachment_url) {
               e.message.attachment_url = baseURL + '/storage/' + e.message.attachment_url.substr(7)
